@@ -1,5 +1,6 @@
 import {AwattarEntry} from "@/app/interfaces";
 import {Util} from "@/app/classes/util";
+import moment from "moment";
 
 export default function AwattarBar({entry, entries, showWithoutTax}: { entry: AwattarEntry, entries: Array<AwattarEntry>, showWithoutTax: boolean }) {
 
@@ -19,18 +20,26 @@ export default function AwattarBar({entry, entries, showWithoutTax}: { entry: Aw
         ret += " dark:border-indigo-950 dark:text-gray-200";
         if (Util.isNow(entry.time))
             ret += " font-medium text-xl";
+      
+        // add a spacer when a new day begins
+        const index = entries.findIndex(x => JSON.stringify(x) === JSON.stringify(entry));
+        if(index !== 0 && moment(entry.time).format("HH") === "00")
+            ret += " mt-6";
+        
         return ret;
     }
 
     const getTimeClass = (): string => {
         let ret = `pl-2 rounded-md bg-gradient-to-r`;
-        ret += " from-blue-200 to-indigo-300";
-        ret += " dark:from-indigo-500 dark:to-pink-400";
+        //ret += " from-blue-200 to-indigo-300";
+        //ret += " from-indigo-200 to-violet-300";
+        ret += " from-indigo-300 via-purple-300 to-pink-400";
+        ret += " dark:from-indigo-500 dark:via-purple-500 dark:to-rose-400";
         return ret;
     }
 
     const getTimePercentage = (): number => {
-        return entriesWithRange?.find(e => e.entry.grossPrice === entry.grossPrice)?.range ?? 1
+        return entriesWithRange?.find(e => e.entry.grossPrice === entry.grossPrice)?.range ?? 0;
     }
 
 
