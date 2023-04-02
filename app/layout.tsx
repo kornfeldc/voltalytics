@@ -19,12 +19,12 @@ export default function RootLayout({
             bg-slate-200
             dark:bg-gray-950 dark:text-slate-200
             ">
-        <header>
+        <header className="sticky top-0 z-50">
             <HeaderBar></HeaderBar>
         </header>
-        <section>
+        <main className="relative">
             {children}
-        </section>
+        </main>
         </body>
         </html>
     )
