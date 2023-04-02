@@ -8,6 +8,12 @@ Voltalytics is an open-source project designed to display real-time electricity 
 - Detailed list of prices accessible with a single click.
 - (Coming soon) Integration with Sofar Solar Inverter API data.
 
+## Techstack
+
+- [Next.js 13](https://beta.nextjs.org/docs)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [aWATTar API](https://www.awattar.at/services/api)
+
 ## Screenshots
 
 Dashboard (light)  
@@ -21,3 +27,4 @@ PriceChart (light)
 
 PriceChart (dark)  
 ![Dashboard Screenshot](./assets/images/list-dark-screenshot.png)
+
