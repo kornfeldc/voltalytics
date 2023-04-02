@@ -15,7 +15,10 @@ export default function AwattarCard() {
     return (
         <Card>
             <div className="cursor-pointer">
-                <h1 className="font-medium subpixel-antialiased pb-2">awattar prices</h1>
+                <div className="flex items-center">
+                    <h1 className="grow font-medium subpixel-antialiased pb-2">aWATTar prices</h1>
+                    <span className="text-xs">cent/kWh</span>
+                </div>
                 {awattarData?.map((entry: AwattarEntry, index: number) => (
                     <AwattarLine key={index} entry={entry} entries={awattarData}/>
                 ))}

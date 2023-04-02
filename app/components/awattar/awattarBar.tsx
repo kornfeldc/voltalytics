@@ -1,7 +1,7 @@
 import {AwattarEntry} from "@/app/interfaces";
 import {Util} from "@/app/classes/util";
 
-export default function AwattarBar({entry, entries}: { entry: AwattarEntry, entries: Array<AwattarEntry> }) {
+export default function AwattarBar({entry, entries, showWithoutTax}: { entry: AwattarEntry, entries: Array<AwattarEntry>, showWithoutTax: boolean }) {
 
     const prices = entries.map(e => e.grossPrice);
     const maxValue = Math.max(...prices);
@@ -46,7 +46,7 @@ export default function AwattarBar({entry, entries}: { entry: AwattarEntry, entr
                     {Util.getFormattedTime(entry.time, true)}
                 </div>
             </div>
-            <div className="text-right" style={{width: "3em"}}>{Util.numberFormat(entry.grossPrice)}</div>
+            <div className="text-right" style={{width: "3em"}}>{Util.numberFormat(showWithoutTax ? entry.netPrice : entry.grossPrice)}</div>
         </div>
     );
 }
