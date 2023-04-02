@@ -1,18 +1,14 @@
 import {AwattarEntry} from "@/app/interfaces";
-import {AwattarApi} from "@/app/classes/awattarApi";
+import {Util} from "@/app/classes/util";
 
 export default function AwattarLine({entry, entries}: { entry: AwattarEntry, entries: Array<AwattarEntry> }) {
 
     const getClass = (entry: AwattarEntry): string => {
-        if (AwattarApi.isNow(entry))
+        if (Util.isNow(entry.time))
             return "text-indigo-500 dark:text-indigo-300 py-2 font-medium text-lg";
-        if (AwattarApi.isPast(entry))
+        if (Util.isPast(entry.time))
             return "text-gray-500 dark:text-gray-400";
         return "";
-    }
-
-    const format = (number: number): string => {
-        return number.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
     return (
@@ -20,8 +16,8 @@ export default function AwattarLine({entry, entries}: { entry: AwattarEntry, ent
             "flex",
             getClass(entry)
         ].join(' ')}>
-            <div className="grow">{AwattarApi.getFormattedTime(entry)}</div>
-            <div className="">{format(entry.grossPrice)}</div>
+            <div className="grow">{Util.getFormattedTime(entry.time)}</div>
+            <div className="">{Util.numberFormat(entry.grossPrice)}</div>
         </div>
     );
 }

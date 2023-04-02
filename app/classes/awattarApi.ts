@@ -28,18 +28,4 @@ export class AwattarApi {
         });
     }
 
-    static isPast(entry: AwattarEntry): boolean {
-        return moment(entry.time).startOf("hour").isBefore(moment().startOf("hour"));
-    }
-    
-    static isNow(entry: AwattarEntry): boolean {
-        return moment(entry.time).startOf("hour").format("HH") === moment().startOf("hour").format("HH");
-    }
-
-    static getFormattedTime(entry: AwattarEntry, startOnly = false): string {
-        const timestamp = moment(entry.time).startOf("hour");
-        const part1 = `${timestamp.format("HH:mm")}`;
-        if(startOnly) return part1; 
-        return `${part1} - ${timestamp.add(1, "hours").format("HH:mm")}`;
-    }
 }
