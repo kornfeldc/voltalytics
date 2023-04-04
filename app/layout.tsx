@@ -12,6 +12,7 @@ export default function RootLayout({
                                    }: {
     children: React.ReactNode
 }) {
+    
     return (
         <html lang="en">
         <link rel="manifest" href="../manifest.json"></link>

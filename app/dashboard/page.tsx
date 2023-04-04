@@ -2,6 +2,7 @@
 import AwattarCard from "@/app/components/awattar/awattarCard";
 import {useRouter} from "next/navigation";
 import React from "react";
+import PullToRefresh from "@/app/components/pullToRefresh";
 
 
 export default function DashboardPage() {
@@ -14,6 +15,7 @@ export default function DashboardPage() {
     return (
         <div className="p-4 "
              onClick={gotoAwattar}>
+            <PullToRefresh></PullToRefresh>
             <AwattarCard/>
         </div>
     )
