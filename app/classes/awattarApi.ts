@@ -3,11 +3,11 @@ import moment, {max} from "moment";
 import {ST} from "next/dist/shared/lib/utils";
 
 export class AwattarApi {
-    static async getData({ hours = 5, offsetHours = 2 } = {}): Promise<Array<AwattarEntry> | null> {
+    static async getData({ hours = 5, offsetHours = 1 } = {}): Promise<Array<AwattarEntry> | null> {
         const startMoment = moment().startOf("hour").add(offsetHours*-1,'hours');
         const start = (startMoment.unix()*1000);
 
-        var key = `awd_${start}`;
+        let key = `awd_${start}`;
         
         let url = `https://api.awattar.at/v1/marketdata?start=${start}`;
         if(hours > 0) {

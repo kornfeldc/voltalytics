@@ -15,7 +15,7 @@ export default function AwattarPage() {
     }
     
     useEffect(() => {
-        AwattarApi.getData({hours: 0, offsetHours: 1}).then(data => setAwattarData(data))
+        AwattarApi.getData({hours: 0, offsetHours: 0}).then(data => setAwattarData(data))
 
     }, []);
     return (
