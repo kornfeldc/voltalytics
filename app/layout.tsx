@@ -1,6 +1,7 @@
 import './globals.css'
 import React from "react";
 import HeaderBar from "@/app/components/headerBar";
+import ProvidersWrapper from "@/app/providers/Wrapper";
 
 export const metadata = {
     title: 'voltalytics',
@@ -12,7 +13,7 @@ export default function RootLayout({
                                    }: {
     children: React.ReactNode
 }) {
-    
+
     return (
         <html lang="en">
         <link rel="manifest" href="../manifest.json"></link>
@@ -21,12 +22,14 @@ export default function RootLayout({
             bg-slate-200
             dark:bg-gray-950 dark:text-slate-200
             ">
-        <header className="sticky top-0 z-50">
-            <HeaderBar></HeaderBar>
-        </header>
-        <main className="relative">
-            {children}
-        </main>
+        <ProvidersWrapper>
+            <header className="sticky top-0 z-50">
+                <HeaderBar></HeaderBar>
+            </header>
+            <main className="relative">
+                {children}
+            </main>
+        </ProvidersWrapper>
         </body>
         </html>
     )
