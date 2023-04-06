@@ -20,7 +20,7 @@ export default function UserPage() {
     return (
         <div className="p-4">
             <div className="mb-4">
-                <Info>If you want to use additional features, like '&quot;'SolarMan'&quot;' integration, you'll have to sign in with
+                <Info>If you want to use additional features, like &quot;SolarMan&quot; integration, you&apos;ll have to sign in with
                     your google account</Info>
             </div>
             <Button onClick={() => signIn()}>Sign In</Button>
