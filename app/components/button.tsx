@@ -1,11 +1,11 @@
 import React, {MouseEvent} from "react";
 
-export default ({
+export default function Button ({
                     children, onClick
                 }: {
     children: React.ReactNode,
     onClick: (event: MouseEvent<HTMLButtonElement>) => void
-}) => {
+}) {
 
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
         if (onClick) {
