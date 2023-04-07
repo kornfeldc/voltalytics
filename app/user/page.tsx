@@ -7,23 +7,20 @@ import Info from "@/app/components/info";
 export default function UserPage() {
     const {data: session} = useSession();
 
-    if (session)
-        return (
-            <div className="p-4">
-                <div className="mb-4">
-                    <Info>Signed in as {session?.user?.email}</Info>
-                </div>
-                <Button onClick={() => signOut()}>Sign Out</Button>
-            </div>
-        );
+    const getInfoText = () => session
+        ? `Signed in as ${session?.user?.email}`
+        : `If you want to use additional features, like "SolarMan" integration, you'll have to sign in with your google account`;
+
+    const renderButton = () => session
+        ? (<Button onClick={() => signOut()}>Sign Out</Button>)
+        : (<Button onClick={() => signIn()}>Sign In</Button>);
 
     return (
         <div className="p-4">
             <div className="mb-4">
-                <Info>If you want to use additional features, like &quot;SolarMan&quot; integration, you&apos;ll have to sign in with
-                    your google account</Info>
+                <Info>{getInfoText()}</Info>
             </div>
-            <Button onClick={() => signIn()}>Sign In</Button>
+            <div>{renderButton()}</div>
         </div>
     );
 }
