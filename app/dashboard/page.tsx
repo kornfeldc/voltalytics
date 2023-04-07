@@ -1,12 +1,39 @@
 "use client";
 import AwattarCard from "@/app/components/awattar/awattarCard";
 import {useRouter} from "next/navigation";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import PullToRefresh from "@/app/components/pullToRefresh";
+import {useSession} from "next-auth/react";
+import {Db, IUser} from "@/app/classes/db";
+import SolarManCard from "@/app/components/awattar/solarManCard";
 
 
 export default function DashboardPage() {
     const router = useRouter();
+    const {data: session} = useSession();
+    const [user, setUser] = useState<IUser>();
+    const [renderSolarManCard, setRenderSolarManCard] = useState(false);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            if (!session) return;
+            const fetchedUser = await Db.getUser(session);
+            if (fetchedUser) setUser(fetchedUser);
+        };
+
+        fetchUser().then(() => {
+        });
+    }, [session]);
+
+    useEffect(() => {
+        if (!user?.solarManIsOn ||
+            !user?.solarManAppId ||
+            !user?.solarManAppPw ||
+            !user?.solarManAppEmail ||
+            !user?.solarManAppSecret
+        ) return;
+        setRenderSolarManCard(true);
+    }, [user]);
 
     const gotoAwattar = () => {
         router.push("/awattar");
@@ -16,7 +43,13 @@ export default function DashboardPage() {
         <div className="p-4 "
              onClick={gotoAwattar}>
             <PullToRefresh></PullToRefresh>
-            <AwattarCard/>
+            {renderSolarManCard && 
+                <div className="mb-4">
+                    <SolarManCard user={user!}/>
+                </div>}
+            <div className="mb-4">
+                <AwattarCard/>
+            </div>
         </div>
     )
 }
