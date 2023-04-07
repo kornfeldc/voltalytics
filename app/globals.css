@@ -6,6 +6,10 @@
     overscroll-behavior-y: contain;
 }
 
+.custom-input {
+    @apply rounded-md p-2 text-slate-900 dark:bg-slate-600 dark:text-slate-50;
+}
+
 /*:root {
   --max-width: 1100px;
   --border-radius: 12px;
