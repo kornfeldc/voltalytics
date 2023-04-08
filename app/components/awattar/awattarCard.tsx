@@ -22,7 +22,7 @@ export default function AwattarCard() {
         <Card>
             <div className="cursor-pointer">
                 <div className="flex items-center">
-                    <h1 className="grow font-medium subpixel-antialiased pb-2">aWATTar prices</h1>
+                    <h1 className="pb-2">aWATTar prices</h1>
                     <span className="text-xs">cent/kWh</span>
                 </div>
                 {loading && (

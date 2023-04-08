@@ -28,7 +28,7 @@ export default function AwattarPage() {
             <PullToRefresh></PullToRefresh>
             <div className="p-4 cursor-pointer" onClick={changeTaxDisplay}>
                 <div className="pl-1 pr-3 flex items-center">
-                    <h1 className="grow font-medium subpixel-antialiased pb-2">aWATTar prices</h1>
+                    <h1 className="pb-2">aWATTar prices</h1>
                     <span className="text-xs">cent/kWh{showWithoutTax ? ' (w/o tax)' : ''}</span>
                 </div>
                 {loading && (

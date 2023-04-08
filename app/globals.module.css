@@ -1,0 +1,7 @@
+.custom-input {
+    @apply rounded-md p-2 text-slate-900 dark:bg-slate-600 dark:text-slate-50;
+}
+
+.label {
+    @apply text-xs dark:text-slate-400;
+}

@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import PullToRefresh from "@/app/components/pullToRefresh";
 import {useSession} from "next-auth/react";
 import {Db, IUser} from "@/app/classes/db";
-import SolarManCard from "@/app/components/awattar/solarManCard";
+import SolarManCard from "@/app/components/solarMan/solarManCard";
 
 
 export default function DashboardPage() {

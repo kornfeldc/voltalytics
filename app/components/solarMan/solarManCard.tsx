@@ -4,6 +4,8 @@ import {ISolarManRealTimeInfo, SolarManApi} from "@/app/classes/solarManApi";
 import {IUser} from "@/app/classes/db";
 import moment from "moment";
 import LoadingSpinner from "@/app/components/loadingSpinner";
+import smStyles from "./solarManCard.module.css";
+import globalStyles from "../../globals.module.css";
 
 interface SolarManCardProps {
     user: IUser;
@@ -22,9 +24,15 @@ export default function SolarManCard({user}: SolarManCardProps) {
         })
     }, [user]);
 
+    const prepareValue = (watt: number | null | undefined): number => {
+        if (!watt) return 0;
+        let kw = watt / 1000;
+        if (kw <= 0.05) kw = 0;
+        return kw;
+    }
+
     const format = (watt: number | null | undefined) => {
-        if (!watt) return "0 kW";
-        const kw = watt / 1000;
+        const kw = prepareValue(watt);
         return `${kw.toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})} kW`;
     }
 
@@ -33,9 +41,7 @@ export default function SolarManCard({user}: SolarManCardProps) {
         return moment(lastUpdateTime * 1000).format("DD.MM.YYYY HH:mm");
     }
 
-    const renderLabel = (label: string) => {
-        return (<div className="text-xs dark:text-slate-400">{label}</div>);
-    }
+    const renderLabel = (label: string) => <div className={globalStyles.label}>{label}</div>;
 
     const renderRealTimeStat = (
         color: string,
@@ -47,11 +53,11 @@ export default function SolarManCard({user}: SolarManCardProps) {
         return (
             <div className={right ? "text-right" : ""}>
                 <div className={[
-                    value ? color : "text-slate-400",
-                    "text-xl flex items-center",
-                    right ? "justify-end" : ""
+                    value ? color : smStyles.color0,
+                    smStyles.stat,
+                    right ? smStyles.statRight : ""
                 ].join(" ")}>
-                    <span className={ !right ? "mr-2" : "" }>{format(value)}</span>
+                    <span className={!right ? "mr-2" : ""}>{format(value)}</span>
                     {additionalRenderFunction && additionalRenderFunction}
                 </div>
                 {renderLabel(label)}
@@ -61,41 +67,38 @@ export default function SolarManCard({user}: SolarManCardProps) {
 
     const renderProduction = () => {
         if (!realTimeData) return;
-        return renderRealTimeStat("text-blue-600", realTimeData.generationPower, "Production");
+        return renderRealTimeStat(smStyles.colorProduction, realTimeData.generationPower, "Production");
     }
 
     const renderGrid = () => {
         if (!realTimeData) return;
-        if (realTimeData.purchasePower)
+        if (prepareValue(realTimeData.purchasePower))
             return renderRealTimeStat(
-                "text-red-600",
+                smStyles.colorFromGrid,
                 (realTimeData.purchasePower ?? 0) * -1,
                 "From Grid",
                 true);
-        if (realTimeData.gridPower)
+        if (prepareValue(realTimeData.gridPower))
             return renderRealTimeStat(
-                "text-green-600",
+                smStyles.colorToGrid,
                 realTimeData.gridPower,
                 "To Grid",
                 true);
         return renderRealTimeStat("", 0, "From/To Grid", true);
     }
-    
-    const getBatteryColor = (percentage: number) => {
-        if(percentage >= 80)
-            return "bg-green-600";
-        if(percentage >= 50)
-            return "bg-blue-600";
-        if(percentage >= 25)
-            return "bg-amber-600";
-        return "bg-red-600";
-    }
+
+    const getBatteryColor = (percentage: number) => (
+        percentage >= 80 ? smStyles.batteryFull :
+            percentage >= 50 ? smStyles.batteryMedium :
+                percentage >= 25 ? smStyles.batteryLow :
+                    smStyles.batteryEmpty
+    );
 
     const renderBatteryIcon = () => {
         if (!realTimeData) return;
         return (
             <span className={[
-                "rounded-md text-white text-sm py-0.5 px-2",
+                smStyles.battery,
                 getBatteryColor(realTimeData.batterySoc ?? 0)
             ].join(" ")}>{realTimeData.batterySoc} %</span>
         );
@@ -103,17 +106,16 @@ export default function SolarManCard({user}: SolarManCardProps) {
 
     const renderBattery = () => {
         if (!realTimeData) return;
-        
-        if (realTimeData.chargePower)
+        if (prepareValue(realTimeData.chargePower))
             return renderRealTimeStat(
-                "text-indigo-600",
+                smStyles.colorCharging,
                 realTimeData.chargePower,
                 "Charging Power",
                 false,
                 renderBatteryIcon());
-        if (realTimeData.dischargePower)
+        if (prepareValue(realTimeData.dischargePower))
             return renderRealTimeStat(
-                "text-green-600",
+                smStyles.colorDischarging,
                 realTimeData.dischargePower,
                 "Charging Power",
                 false,
@@ -127,30 +129,22 @@ export default function SolarManCard({user}: SolarManCardProps) {
 
     const renderUsage = () => {
         if (!realTimeData) return;
-        return renderRealTimeStat("text-amber-400", realTimeData.usePower, "Usage", true);
+        return renderRealTimeStat(smStyles.colorUsage, realTimeData.usePower, "Usage", true);
     }
 
     const renderRealtimeContent = () => {
         if (!realTimeData) return null;
 
         return (
-            <div>
-                <h2 className="grow text-xs dark:text-slate-300">{getLastUpdateTime(realTimeData.lastUpdateTime)}</h2>
-                <div className="w-full flex mb-2 mt-2">
-                    <div className="w-1/2">
-                        {renderProduction()}
-                    </div>
-                    <div className="w-1/2">
-                        {renderGrid()}
-                    </div>
+            <div className={smStyles.grid}>
+                <h2>{getLastUpdateTime(realTimeData.lastUpdateTime)}</h2>
+                <div>
+                    <div>{renderProduction()}</div>
+                    <div>{renderGrid()}</div>
                 </div>
-                <div className="w-full flex">
-                    <div className="w-1/2">
-                        {renderBattery()}
-                    </div>
-                    <div className="w-1/2">
-                        {renderUsage()}
-                    </div>
+                <div>
+                    <div>{renderBattery()}</div>
+                    <div>{renderUsage()}</div>
                 </div>
             </div>
         );
@@ -170,7 +164,7 @@ export default function SolarManCard({user}: SolarManCardProps) {
 
     const renderCardBase = () => (
         <div className="cursor-pointer">
-            <h1 className="grow font-medium subpixel-antialiased">solarman live data</h1>
+            <h1>solarman live data</h1>
             {renderLoadingOrData()}
         </div>);
 

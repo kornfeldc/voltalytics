@@ -1,0 +1,63 @@
+.stat {
+    @apply text-xl flex items-center;
+}
+
+.statRight {
+    @apply justify-end;
+}
+
+.color0 {
+    @apply text-slate-400;
+}
+
+.colorProduction {
+    @apply text-blue-500;
+}
+
+.colorToGrid {
+    @apply text-green-600;
+}
+
+.colorFromGrid {
+    @apply text-red-600;
+}
+
+.colorCharging {
+    @apply text-green-600;
+}
+
+.colorDischarging {
+    @apply text-blue-600;
+}
+
+.colorUsage {
+    @apply text-amber-600;
+}
+
+.batteryFull {
+    @apply bg-green-600;
+}
+
+.batteryMedium {
+    @apply bg-blue-500;
+}
+
+.batteryLow {
+    @apply bg-amber-600;
+}
+
+.batteryEmpty {
+    @apply bg-red-600;
+}
+
+.battery {
+    @apply rounded-md text-white text-sm py-0.5 px-2;
+}
+
+.grid > div {
+    @apply w-full flex mb-2 mt-2;
+}
+
+.grid > div > div {
+    @apply w-1/2; 
+}
