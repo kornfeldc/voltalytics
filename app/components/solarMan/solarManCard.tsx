@@ -27,7 +27,7 @@ export default function SolarManCard({user}: SolarManCardProps) {
     const prepareValue = (watt: number | null | undefined): number => {
         if (!watt) return 0;
         let kw = watt / 1000;
-        if (kw <= 0.05) kw = 0;
+        if (Math.abs(kw) <= 0.03) kw = 0;
         return kw;
     }
 
