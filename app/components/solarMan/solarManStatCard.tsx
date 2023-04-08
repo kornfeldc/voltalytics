@@ -49,7 +49,7 @@ export default function SolarManStatCard({user, range = "day", day = moment().fo
                     smStyles.stat,
                     right ? smStyles.statRight : ""
                 ].join(" ")}>
-                    <span className={!right ? "mr-2" : ""}>{format(value)}</span>
+                    <span className={!right ? "mr-2" : ""}>{format(value)} <span className="text-xs">kW</span></span>
                 </div>
                 {renderLabel(label)}
             </div>

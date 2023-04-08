@@ -33,7 +33,7 @@ export default function SolarManCard({user}: SolarManCardProps) {
 
     const format = (watt: number | null | undefined) => {
         const kw = prepareValue(watt);
-        return `${kw.toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})} kW`;
+        return `${kw.toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})}`;
     }
 
     const getLastUpdateTime = (lastUpdateTime: number | undefined | null): string => {
@@ -57,7 +57,7 @@ export default function SolarManCard({user}: SolarManCardProps) {
                     smStyles.stat,
                     right ? smStyles.statRight : ""
                 ].join(" ")}>
-                    <span className={!right ? "mr-2" : ""}>{format(value)}</span>
+                    <span className={!right ? "mr-2" : ""}>{format(value)}&nbsp;<span className="text-xs">kWh</span></span>
                     {additionalRenderFunction && additionalRenderFunction}
                 </div>
                 {renderLabel(label)}

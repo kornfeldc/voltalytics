@@ -7,6 +7,8 @@ import {useSession} from "next-auth/react";
 import {Db, IUser} from "@/app/classes/db";
 import SolarManCard from "@/app/components/solarMan/solarManCard";
 import SolarManStatCard from "@/app/components/solarMan/solarManStatCard";
+import Link from "next/link";
+import moment from "moment";
 
 
 export default function DashboardPage() {
@@ -50,10 +52,14 @@ export default function DashboardPage() {
                     </div>
                     <div className="mb-4 flex">
                         <div className="flex-auto mr-1">
-                            <SolarManStatCard user={user!}/>
+                            <Link href={`/solarman/day/${moment().format("YYYY-MM-DD")}`}>
+                                <SolarManStatCard user={user!}/>
+                            </Link>
                         </div>
                         <div className="flex-auto ml-1">
-                            <SolarManStatCard user={user!} range="month"/>
+                            <Link href={`/solarman/month/${moment().startOf("month").format("YYYY-MM-DD")}`}>
+                                <SolarManStatCard user={user!} range="month"/>
+                            </Link>
                         </div>
                     </div>
                 </div>
