@@ -1,4 +1,12 @@
-import { createProxyMiddleware } from 'http-proxy-middleware';
+import {createProxyMiddleware} from 'http-proxy-middleware';
+
+const proxyHandler = (req, res) => {
+    proxy(req, res, (result) => {
+        if (result instanceof Error) {
+            res.status(500).json({error: result.message});
+        }
+    });
+};
 
 const proxy = createProxyMiddleware({
     target: 'https://api.solarmanpv.com',
@@ -8,7 +16,7 @@ const proxy = createProxyMiddleware({
     },
     onError(err, req, res) {
         console.error('Proxy error:', err);
-        res.status(500).json({ error: 'Proxy error' });
+        res.status(500).json({error: 'Proxy error'});
     },
     onProxyReq(proxyReq, req, res) {
         console.log('Proxy request:', req.url);
@@ -18,17 +26,11 @@ const proxy = createProxyMiddleware({
     },
 });
 
-export default (req, res) => {
-    proxy(req, res, (result) => {
-        if (result instanceof Error) {
-            res.status(500).json({ error: result.message });
-        }
-    });
-};
-
-export const config = {
+const config = {
     api: {
         bodyParser: false,
         externalResolver: true,
     },
 };
+
+export {proxyHandler as default, config};

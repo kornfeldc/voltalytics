@@ -12,7 +12,7 @@ export default function AwattarCard() {
 
     useEffect(() => {
         setLoading(true);
-        AwattarApi.getData().then(data => { 
+        AwattarApi.getData({hours: 3}).then(data => {
             setAwattarData(data);
             setLoading(false);
         })

@@ -43,7 +43,7 @@ export default function DashboardPage() {
         <div className="p-4 "
              onClick={gotoAwattar}>
             <PullToRefresh></PullToRefresh>
-            {renderSolarManCard && 
+            {renderSolarManCard &&
                 <div className="mb-4">
                     <SolarManCard user={user!}/>
                 </div>}

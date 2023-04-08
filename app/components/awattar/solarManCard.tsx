@@ -20,7 +20,7 @@ export default function SolarManCard({user}: SolarManCardProps) {
             setRealTimeData(data);
             setLoading(false);
         })
-    }, []);
+    }, [user]);
 
     const format = (watt: number | null | undefined) => {
         if (!watt) return "0 kW";
@@ -143,9 +143,9 @@ export default function SolarManCard({user}: SolarManCardProps) {
     const renderLoadingOrData = () => {
         if (loading)
             return (
-            <div className="text-sm text-slate-300 mt-1">
-                <LoadingSpinner text="Loading inverter data ..."></LoadingSpinner>
-            </div>);
+                <div className="text-sm text-slate-300 mt-1">
+                    <LoadingSpinner text="Loading inverter data ..."></LoadingSpinner>
+                </div>);
         if (!realTimeData?.success)
             return (<div>error on loading data, please try again</div>)
         return renderRealtimeContent();
