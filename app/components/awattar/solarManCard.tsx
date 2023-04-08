@@ -48,9 +48,11 @@ export default function SolarManCard({user}: SolarManCardProps) {
             <div className={right ? "text-right" : ""}>
                 <div className={[
                     value ? color : "text-slate-400",
-                    !right ? "mr-2" : ""
+                    "text-xl flex items-center",
+                    right ? "justify-end" : ""
                 ].join(" ")}>
-                    {format(value) + (additionalRenderFunction ? additionalRenderFunction : "")}
+                    <span className={ !right ? "mr-2" : "" }>{format(value)}</span>
+                    {additionalRenderFunction && additionalRenderFunction}
                 </div>
                 {renderLabel(label)}
             </div>
@@ -78,19 +80,33 @@ export default function SolarManCard({user}: SolarManCardProps) {
                 true);
         return renderRealTimeStat("", 0, "From/To Grid", true);
     }
+    
+    const getBatteryColor = (percentage: number) => {
+        if(percentage >= 80)
+            return "bg-green-600";
+        if(percentage >= 50)
+            return "bg-blue-600";
+        if(percentage >= 25)
+            return "bg-amber-600";
+        return "bg-red-600";
+    }
 
     const renderBatteryIcon = () => {
         if (!realTimeData) return;
         return (
-            <span className="rounded-md bg-green-600 text-white text-xs py-1 px-2">{realTimeData.batterySoc} %</span>
+            <span className={[
+                "rounded-md text-white text-sm py-0.5 px-2",
+                getBatteryColor(realTimeData.batterySoc ?? 0)
+            ].join(" ")}>{realTimeData.batterySoc} %</span>
         );
     }
 
     const renderBattery = () => {
         if (!realTimeData) return;
+        
         if (realTimeData.chargePower)
             return renderRealTimeStat(
-                "text-green-600",
+                "text-indigo-600",
                 realTimeData.chargePower,
                 "Charging Power",
                 false,
@@ -98,7 +114,7 @@ export default function SolarManCard({user}: SolarManCardProps) {
         if (realTimeData.dischargePower)
             return renderRealTimeStat(
                 "text-green-600",
-                realTimeData.chargePower,
+                realTimeData.dischargePower,
                 "Charging Power",
                 false,
                 renderBatteryIcon()
