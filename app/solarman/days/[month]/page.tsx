@@ -49,7 +49,7 @@ export default function SolarManDayPage({params}: { params: any }) {
         <div>
             {renderSolarManCard &&
                 days.map(day => (
-                    <div className="m-4">
+                    <div className="m-4" key={day.format("YYYY-MM-DD")}>
                         <SolarManStatCard user={user!} day={day.format("YYYY-MM-DD")}/>
                     </div>
                 ))

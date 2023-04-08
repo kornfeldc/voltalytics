@@ -48,7 +48,7 @@ export default function SolarManMonthPage({params}: { params: any }) {
         <div>
             {renderSolarManCard &&
                 months.map(month => (
-                    <div className="m-4">
+                    <div className="m-4" key={month.format("YYYY-MM-DD")}>
                         <SolarManStatCard user={user!} range="month" day={month.format("YYYY-MM-DD")}/>
                     </div>
                 ))
