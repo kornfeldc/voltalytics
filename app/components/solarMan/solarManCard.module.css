@@ -27,7 +27,7 @@
 }
 
 .colorDischarging {
-    @apply text-blue-600;
+    @apply text-amber-600;
 }
 
 .colorUsage {

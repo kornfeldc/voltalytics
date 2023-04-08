@@ -65,20 +65,28 @@ export default function SolarManStatCard({
         );
     }
 
-    const renderProduction = () => {
-        return renderStatValue(smStyles.colorProduction, statData?.generationValue, "Production");
+    const renderProduction = (right = false) => {
+        return renderStatValue(smStyles.colorProduction, statData?.generationValue, "Production", right);
     }
 
-    const renderUsage = () => {
-        return renderStatValue(smStyles.colorUsage, statData?.useValue, "Usage", true);
+    const renderUsage = (right = false) => {
+        return renderStatValue(smStyles.colorUsage, statData?.useValue, "Usage", right);
     }
 
-    const renderBattery = () => {
-        return renderStatValue(smStyles.colorCharging, statData?.dischargeValue, "From Battery");
+    const renderBattery = (right = false) => {
+        return renderStatValue(smStyles.colorCharging, statData?.dischargeValue, "From Battery", right);
     };
 
-    const renderGrid = () => {
-        return renderStatValue(smStyles.colorFromGrid, statData?.buyValue, "From Grid", true);
+    const renderGrid = (right = false) => {
+        return renderStatValue(smStyles.colorFromGrid, statData?.buyValue, "From Grid", right);
+    }
+    
+    const renderCharge = (right = false) => {
+        return renderStatValue(smStyles.colorProduction, statData?.chargeValue, "To Battery", right);
+    }
+    
+    const renderFeedIn = (right = false) => {
+        return renderStatValue(smStyles.colorCharging, statData?.chargeValue, "To Grid", right);
     }
 
 
@@ -89,11 +97,15 @@ export default function SolarManStatCard({
             <div className={smStyles.grid}>
                 <div>
                     <div>{renderProduction()}</div>
-                    <div>{renderGrid()}</div>
+                    <div>{renderGrid(true)}</div>
+                </div>
+                <div>
+                    <div>{renderCharge()}</div>
+                    <div>{renderFeedIn(true)}</div>
                 </div>
                 <div>
                     <div>{renderBattery()}</div>
-                    <div>{renderUsage()}</div>
+                    <div>{renderUsage(true)}</div>
                 </div>
             </div>
         );

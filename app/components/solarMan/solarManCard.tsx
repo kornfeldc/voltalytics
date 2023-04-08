@@ -65,25 +65,25 @@ export default function SolarManCard({user}: SolarManCardProps) {
         );
     }
 
-    const renderProduction = () => {
+    const renderProduction = (right = false) => {
         if (!realTimeData) return;
-        return renderRealTimeStat(smStyles.colorProduction, realTimeData.generationPower, "Production");
+        return renderRealTimeStat(smStyles.colorProduction, realTimeData.generationPower, "Production", right);
     }
 
-    const renderGrid = () => {
+    const renderGrid = (right = false) => {
         if (!realTimeData) return;
         if (prepareValue(realTimeData.purchasePower))
             return renderRealTimeStat(
                 smStyles.colorFromGrid,
-                (realTimeData.purchasePower ?? 0) * -1,
+                Math.abs(realTimeData.purchasePower ?? 0),
                 "From Grid",
-                true);
+                right);
         if (prepareValue(realTimeData.gridPower))
             return renderRealTimeStat(
                 smStyles.colorToGrid,
                 realTimeData.gridPower,
                 "To Grid",
-                true);
+                right);
         return renderRealTimeStat("", 0, "From/To Grid", true);
     }
 
@@ -104,32 +104,32 @@ export default function SolarManCard({user}: SolarManCardProps) {
         );
     }
 
-    const renderBattery = () => {
+    const renderBattery = (right = false) => {
         if (!realTimeData) return;
-        if (prepareValue(realTimeData.chargePower))
-            return renderRealTimeStat(
-                smStyles.colorCharging,
-                realTimeData.chargePower,
-                "Charging Power",
-                false,
-                renderBatteryIcon());
         if (prepareValue(realTimeData.dischargePower))
             return renderRealTimeStat(
                 smStyles.colorDischarging,
-                realTimeData.dischargePower,
-                "Charging Power",
-                false,
+                Math.abs(realTimeData.dischargePower ?? 0),
+                "Discharging Battery",
+                right,
                 renderBatteryIcon()
             );
+        if (prepareValue(realTimeData.chargePower))
+            return renderRealTimeStat(
+                smStyles.colorCharging,
+                Math.abs(realTimeData.chargePower ?? 0),
+                "Charging Battery",
+                right,
+                renderBatteryIcon());
         return (<div>
             <div>{renderBatteryIcon()}</div>
             {renderLabel("Battery idle")}
         </div>);
     }
 
-    const renderUsage = () => {
+    const renderUsage = (right = false) => {
         if (!realTimeData) return;
-        return renderRealTimeStat(smStyles.colorUsage, realTimeData.usePower, "Usage", true);
+        return renderRealTimeStat(smStyles.colorUsage, realTimeData.usePower, "Usage", right);
     }
 
     const renderRealtimeContent = () => {
@@ -140,11 +140,11 @@ export default function SolarManCard({user}: SolarManCardProps) {
                 <h2>{getLastUpdateTime(realTimeData.lastUpdateTime)}</h2>
                 <div>
                     <div>{renderProduction()}</div>
-                    <div>{renderGrid()}</div>
+                    <div>{renderGrid(true)}</div>
                 </div>
                 <div>
                     <div>{renderBattery()}</div>
-                    <div>{renderUsage()}</div>
+                    <div>{renderUsage(true)}</div>
                 </div>
             </div>
         );
