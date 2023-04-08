@@ -135,9 +135,15 @@ export class SolarManApi {
         );
     }
 
-    static async getDailyInfo(user: IUser, day: string = moment().format("YYYY-MM-DD")): Promise<ISolarManStatInfo | undefined> {
+    static async getStatistics(
+        user: IUser, 
+        day: string = moment().format("YYYY-MM-DD"),
+        range: "day"|"month"|"year" = "day"
+        ): Promise<ISolarManStatInfo | undefined> {
+        
+        const key = `solarMan_${range}_${day}`;
         return await VoltCache.get(
-            `solarMan_daily_${day}`,
+            key, 
             user.email,
             30,
             async (): Promise<any> => {
@@ -149,18 +155,28 @@ export class SolarManApi {
                 if (!stationId) return;
 
                 const url = `${this.solarManUrl}/station/v1.0/history?language=en`;
+                const body = {
+                    stationId
+                } as any;
+                
+                if(range === "day") {
+                    body.timeType = 2;
+                    body.startTime = moment(day).format("YYYY-MM-DD")
+                    body.endTime = moment(day).format("YYYY-MM-DD")
+                }
+                else if(range === "month") {
+                    body.timeType = 3;
+                    body.startTime = moment(day).format("YYYY-MM")
+                    body.endTime = moment(day).format("YYYY-MM")
+                }
+                
                 const response = await fetch(url, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
                     },
-                    body: JSON.stringify({
-                        stationId,
-                        startTime: moment(day).format("YYYY-MM-DD"),
-                        endTime: moment(day).format("YYYY-MM-DD"),
-                        timeType: 2 /* 2= daily*/
-                    })
+                    body: JSON.stringify(body)
                 });
 
                 if (!response.ok) return;

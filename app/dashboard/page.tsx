@@ -44,13 +44,20 @@ export default function DashboardPage() {
         <div className="p-4">
             <PullToRefresh></PullToRefresh>
             {renderSolarManCard &&
-                <div className="mb-4">
-                    <SolarManCard user={user!}/>
-                </div>}
-            {renderSolarManCard &&
-                <div className="mb-4">
-                    <SolarManStatCard user={user!}/>
-                </div>}
+                <div>
+                    <div className="mb-4">
+                        <SolarManCard user={user!}/>
+                    </div>
+                    <div className="mb-4 flex">
+                        <div className="flex-auto mr-1">
+                            <SolarManStatCard user={user!}/>
+                        </div>
+                        <div className="flex-auto ml-1">
+                            <SolarManStatCard user={user!} range="month"/>
+                        </div>
+                    </div>
+                </div>
+            }
             <div className="mb-4" onClick={gotoAwattar}>
                 <AwattarCard/>
             </div>

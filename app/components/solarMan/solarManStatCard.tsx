@@ -9,12 +9,11 @@ import moment from "moment";
 
 interface SolarManStatCardProps {
     user: IUser;
-    type?: "day" | "month";
-    timeFrom?: string;
-    timeTo?: string;
+    range?: "day" | "month";
+    day?: string;
 }
 
-export default function SolarManStatCard({user, type = "day", timeFrom, timeTo}: SolarManStatCardProps) {
+export default function SolarManStatCard({user, range = "day", day = moment().format("YYYY-MM-DD")}: SolarManStatCardProps) {
 
     const [isSuccess, setIsSuccess] = useState(false);
     const [statData, setStatData] = useState<ISolarManStationDataItem | undefined>();
@@ -22,7 +21,7 @@ export default function SolarManStatCard({user, type = "day", timeFrom, timeTo}:
 
     useEffect(() => {
         setLoading(true);
-        SolarManApi.getDailyInfo(user, timeFrom).then(data => {
+        SolarManApi.getStatistics(user, day, range).then(data => {
             setIsSuccess(data?.success ?? false);
             if(data?.stationDataItems?.length ?? 0 > 0)
                 setStatData(data!.stationDataItems![0]);
@@ -33,7 +32,7 @@ export default function SolarManStatCard({user, type = "day", timeFrom, timeTo}:
     }, [user]);
 
     const format = (kw: number | null | undefined) => {
-        return `${(kw ?? 0).toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})} kW`;
+        return `${(kw ?? 0).toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})}`;
     }
     const renderLabel = (label: string) => <div className={globalStyles.label}>{label}</div>;
 
@@ -102,11 +101,15 @@ export default function SolarManStatCard({user, type = "day", timeFrom, timeTo}:
     }
     
     const getTimeSpan = (): string => {
-        if(type === "day") {
-            const day = moment(timeFrom ?? moment()).startOf("day");
-            if(day.isSame(moment().startOf("day")))
+        if(range === "day") {
+            if(moment(day).isSame(moment().startOf("day")))
                 return "TODAY";
-            return day.format("DD.MM.YYYY");
+            return moment(day).format("DD.MM.YYYY");
+        }
+        else if(range === "month") {
+            if(moment(day).isSame(moment().startOf("day")))
+                return "THIS MONTH";
+            return moment(day).format("MMMM YYYY");
         }
         return "todo";
     }
