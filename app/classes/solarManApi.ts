@@ -140,12 +140,22 @@ export class SolarManApi {
         day: string = moment().format("YYYY-MM-DD"),
         range: "day"|"month"|"year" = "day"
         ): Promise<ISolarManStatInfo | undefined> {
+       
+        let cacheSeconds = 30;
+        if(
+            (range === "day" && moment(day).startOf("day").isBefore(moment())) ||
+            (range === "month" && moment(day).startOf("month").isBefore(moment().startOf("month"))) ||
+            (range === "year" && moment(day).startOf("year").isBefore(moment().startOf("year")))) {
+                // past day or past month or past year => values wont change - set a high cache expiration
+                cacheSeconds = 999999;
+        }    
+            
         
         const key = `solarMan_${range}_${day}`;
         return await VoltCache.get(
             key, 
             user.email,
-            30,
+            cacheSeconds,
             async (): Promise<any> => {
 
                 const token = await this.getToken(user);

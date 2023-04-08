@@ -35,7 +35,7 @@ export default function SolarManStatCard({
                 setStatData({} as ISolarManStationDataItem);
             setLoading(false);
         })
-    }, [user]);
+    }, [user,range,day]);
 
     const format = (kw: number | null | undefined) => {
         const digits = showComma ? 2 : 0;
