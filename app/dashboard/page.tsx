@@ -52,13 +52,13 @@ export default function DashboardPage() {
                     </div>
                     <div className="mb-4 flex">
                         <div className="flex-auto mr-1">
-                            <Link href={`/solarman/day/${moment().format("YYYY-MM-DD")}`}>
+                            <Link href={`/solarman/days/${moment().format("YYYY-MM-DD")}`}>
                                 <SolarManStatCard user={user!}/>
                             </Link>
                         </div>
                         <div className="flex-auto ml-1">
-                            <Link href={`/solarman/month/${moment().startOf("month").format("YYYY-MM-DD")}`}>
-                                <SolarManStatCard user={user!} range="month"/>
+                            <Link href={`/solarman/months/${moment().startOf("month").format("YYYY-MM-DD")}`}>
+                                <SolarManStatCard user={user!} range="month" showComma={false}/>
                             </Link>
                         </div>
                     </div>

@@ -3,8 +3,9 @@ import React, {useEffect, useState} from "react";
 import {useSession} from "next-auth/react";
 import {Db, IUser} from "@/app/classes/db";
 import SolarManStatCard from "@/app/components/solarMan/solarManStatCard";
+import moment from "moment";
 
-export default function SolarManMonthPage({params}: { params: any }) {
+export default function SolarManDayPage({params}: { params: any }) {
 
     const {data: session} = useSession();
     const [user, setUser] = useState<IUser>();
@@ -31,12 +32,28 @@ export default function SolarManMonthPage({params}: { params: any }) {
         setRenderSolarManCard(true);
     }, [user]);
 
+
+    let begin = moment(params.month).startOf("month");
+    let end = moment(params.month).endOf("month").startOf("day");
+    if (end.isAfter(moment().startOf("day")))
+        end = moment().startOf("day");
+
+    let days = [];
+    let act = moment(end);
+    while (act.isSameOrAfter(begin)) {
+        days.push(moment(act));
+        act = act.add(-1, "days");
+    }
+
     return (
         <div>
             {renderSolarManCard &&
-                <div className="m-4">
-                    <SolarManStatCard user={user!} range="month" day={params.month}/>
-                </div>}
+                days.map(day => (
+                    <div className="m-4">
+                        <SolarManStatCard user={user!} day={day.format("YYYY-MM-DD")}/>
+                    </div>
+                ))
+            }
         </div>
     );
 }
