@@ -7,7 +7,7 @@
 }
 
 h1 {
-    @apply grow font-medium subpixel-antialiased;
+    @apply grow font-medium subpixel-antialiased lowercase tracking-widest;
 }
 
 h2 {

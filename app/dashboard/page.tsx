@@ -6,6 +6,7 @@ import PullToRefresh from "@/app/components/pullToRefresh";
 import {useSession} from "next-auth/react";
 import {Db, IUser} from "@/app/classes/db";
 import SolarManCard from "@/app/components/solarMan/solarManCard";
+import SolarManStatCard from "@/app/components/solarMan/solarManStatCard";
 
 
 export default function DashboardPage() {
@@ -40,14 +41,17 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="p-4 "
-             onClick={gotoAwattar}>
+        <div className="p-4">
             <PullToRefresh></PullToRefresh>
             {renderSolarManCard &&
                 <div className="mb-4">
                     <SolarManCard user={user!}/>
                 </div>}
-            <div className="mb-4">
+            {renderSolarManCard &&
+                <div className="mb-4">
+                    <SolarManStatCard user={user!}/>
+                </div>}
+            <div className="mb-4" onClick={gotoAwattar}>
                 <AwattarCard/>
             </div>
         </div>
