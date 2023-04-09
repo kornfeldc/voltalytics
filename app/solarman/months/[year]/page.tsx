@@ -5,7 +5,6 @@ import {Db, IUser} from "@/app/classes/db";
 import SolarManStatCard from "@/app/components/solarMan/solarManStatCard";
 import moment from "moment/moment";
 import Link from "next/link";
-import Select from "react-tailwindcss-select";
 
 export default function SolarManMonthPage({params}: { params: any }) {
 
