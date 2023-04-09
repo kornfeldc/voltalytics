@@ -13,3 +13,29 @@ h1 {
 h2 {
     @apply grow text-xs dark:text-slate-300;
 }
+
+@layer utilities {
+    .text-inactive {
+        @apply text-slate-400;
+    }
+    
+    .text-positive {
+        @apply text-green-600 dark:text-teal-500;
+    }
+
+    .text-negative {
+        @apply text-red-600 dark:text-rose-500;
+    }
+
+    .text-neutral {
+        @apply text-blue-500;
+    }
+
+    .text-neutral2 {
+        @apply text-purple-500;
+    }
+
+    .text-warning {
+        @apply text-amber-600 dark:text-orange-400;
+    }
+}

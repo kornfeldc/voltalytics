@@ -4,6 +4,7 @@ import {useSession} from "next-auth/react";
 import {Db, IUser} from "@/app/classes/db";
 import SolarManStatCard from "@/app/components/solarMan/solarManStatCard";
 import moment from "moment/moment";
+import Link from "next/link";
 
 export default function SolarManMonthPage({params}: { params: any }) {
 
@@ -49,7 +50,9 @@ export default function SolarManMonthPage({params}: { params: any }) {
             {renderSolarManCard &&
                 months.map(month => (
                     <div className="m-4" key={month.format("YYYY-MM-DD")}>
-                        <SolarManStatCard user={user!} range="month" day={month.format("YYYY-MM-DD")}/>
+                        <Link href={`/solarman/days/${month.format("YYYY-MM-DD")}`}>
+                            <SolarManStatCard user={user!} range="month" day={month.format("YYYY-MM-DD")}/>
+                        </Link>
                     </div>
                 ))
             }

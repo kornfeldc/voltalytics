@@ -6,36 +6,8 @@
     @apply justify-end;
 }
 
-.color0 {
-    @apply text-slate-400;
-}
-
-.colorProduction {
-    @apply text-blue-500;
-}
-
-.colorToGrid {
-    @apply text-green-600;
-}
-
-.colorFromGrid {
-    @apply text-red-600;
-}
-
-.colorCharging {
-    @apply text-green-600;
-}
-
-.colorDischarging {
-    @apply text-amber-600;
-}
-
-.colorUsage {
-    @apply text-amber-600;
-}
-
 .batteryFull {
-    @apply bg-green-600;
+    @apply bg-green-600 dark:bg-teal-600;
 }
 
 .batteryMedium {

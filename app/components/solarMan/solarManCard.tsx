@@ -53,7 +53,7 @@ export default function SolarManCard({user}: SolarManCardProps) {
         return (
             <div className={right ? "text-right" : ""}>
                 <div className={[
-                    value ? color : smStyles.color0,
+                    value ? color : "text-inactive",
                     smStyles.stat,
                     right ? smStyles.statRight : ""
                 ].join(" ")}>
@@ -67,24 +67,24 @@ export default function SolarManCard({user}: SolarManCardProps) {
 
     const renderProduction = (right = false) => {
         if (!realTimeData) return;
-        return renderRealTimeStat(smStyles.colorProduction, realTimeData.generationPower, "Production", right);
+        return renderRealTimeStat("text-neutral", realTimeData.generationPower, "Production", right);
     }
 
     const renderGrid = (right = false) => {
         if (!realTimeData) return;
         if (prepareValue(realTimeData.purchasePower))
             return renderRealTimeStat(
-                smStyles.colorFromGrid,
+                "text-negative",
                 Math.abs(realTimeData.purchasePower ?? 0),
                 "From Grid",
                 right);
         if (prepareValue(realTimeData.gridPower))
             return renderRealTimeStat(
-                smStyles.colorToGrid,
+                "text-positive",
                 realTimeData.gridPower,
                 "To Grid",
                 right);
-        return renderRealTimeStat("", 0, "From/To Grid", true);
+        return renderRealTimeStat("", 0, "Grid", true);
     }
 
     const getBatteryColor = (percentage: number) => (
@@ -108,7 +108,7 @@ export default function SolarManCard({user}: SolarManCardProps) {
         if (!realTimeData) return;
         if (prepareValue(realTimeData.dischargePower))
             return renderRealTimeStat(
-                smStyles.colorDischarging,
+                "text-neutral2",
                 Math.abs(realTimeData.dischargePower ?? 0),
                 "Discharging Battery",
                 right,
@@ -116,7 +116,7 @@ export default function SolarManCard({user}: SolarManCardProps) {
             );
         if (prepareValue(realTimeData.chargePower))
             return renderRealTimeStat(
-                smStyles.colorCharging,
+                "text-positive",
                 Math.abs(realTimeData.chargePower ?? 0),
                 "Charging Battery",
                 right,
@@ -129,7 +129,7 @@ export default function SolarManCard({user}: SolarManCardProps) {
 
     const renderUsage = (right = false) => {
         if (!realTimeData) return;
-        return renderRealTimeStat(smStyles.colorUsage, realTimeData.usePower, "Usage", right);
+        return renderRealTimeStat("text-warning", realTimeData.usePower, "Usage", right);
     }
 
     const renderRealtimeContent = () => {

@@ -53,7 +53,7 @@ export default function SolarManStatCard({
         return (
             <div className={right ? "text-right" : ""}>
                 <div className={[
-                    value ? color : smStyles.color0,
+                    value ? color : "text-inactive",
                     smStyles.stat,
                     right ? smStyles.statRight : ""
                 ].join(" ")}>
@@ -66,27 +66,27 @@ export default function SolarManStatCard({
     }
 
     const renderProduction = (right = false) => {
-        return renderStatValue(smStyles.colorProduction, statData?.generationValue, "Production", right);
+        return renderStatValue("text-neutral", statData?.generationValue, "Production", right);
     }
 
     const renderUsage = (right = false) => {
-        return renderStatValue(smStyles.colorUsage, statData?.useValue, "Usage", right);
+        return renderStatValue("text-warning", statData?.useValue, "Usage", right);
     }
 
     const renderBattery = (right = false) => {
-        return renderStatValue(smStyles.colorCharging, statData?.dischargeValue, "From Battery", right);
+        return renderStatValue("text-neutral2", statData?.dischargeValue, "From Battery", right);
     };
 
     const renderGrid = (right = false) => {
-        return renderStatValue(smStyles.colorFromGrid, statData?.buyValue, "From Grid", right);
+        return renderStatValue("text-negative", statData?.buyValue, "From Grid", right);
     }
     
     const renderCharge = (right = false) => {
-        return renderStatValue(smStyles.colorProduction, statData?.chargeValue, "To Battery", right);
+        return renderStatValue("text-positive", statData?.chargeValue, "To Battery", right);
     }
     
     const renderFeedIn = (right = false) => {
-        return renderStatValue(smStyles.colorCharging, statData?.chargeValue, "To Grid", right);
+        return renderStatValue("text-positive", statData?.gridValue, "To Grid", right);
     }
 
 
