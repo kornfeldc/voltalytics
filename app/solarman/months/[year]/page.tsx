@@ -5,6 +5,7 @@ import {Db, IUser} from "@/app/classes/db";
 import SolarManStatCard from "@/app/components/solarMan/solarManStatCard";
 import moment from "moment/moment";
 import Link from "next/link";
+import Select from "react-tailwindcss-select";
 
 export default function SolarManMonthPage({params}: { params: any }) {
 
@@ -47,6 +48,22 @@ export default function SolarManMonthPage({params}: { params: any }) {
 
     return (
         <div>
+            <div className={"pt-4 pl-4 pr-4"}>
+                {/*<select className={
+                    "bg-gray-50 " +
+                    "border border-indigo-300 " +
+                    "text-gray-900 text-sm rounded-lg " +
+                    "focus:ring-blue-500 " +
+                    "focus:border-blue-500 " +
+                    "block w-full p-2.5 " +
+                    "dark:bg-gray-900 dark:border-gray-800 " +
+                    "dark:placeholder-gray-400 dark:text-white " +
+                    "dark:focus:ring-blue-500 " +
+                    "dark:focus:border-blue-500"}>
+                    <option>2023</option>
+                    <option>2022</option>
+                </select>*/}
+            </div>
             {renderSolarManCard &&
                 months.map(month => (
                     <div className="m-4" key={month.format("YYYY-MM-DD")}>
@@ -58,12 +75,4 @@ export default function SolarManMonthPage({params}: { params: any }) {
             }
         </div>
     );
-    // return (
-    //     <div>
-    //         {renderSolarManCard &&
-    //             <div className="m-4">
-    //                 <SolarManStatCard user={user!} range="month" day={params.month}/>
-    //             </div>}
-    //     </div>
-    // );
 }
