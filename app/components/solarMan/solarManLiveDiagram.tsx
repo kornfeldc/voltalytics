@@ -1,6 +1,6 @@
 import React from "react";
 import {ISolarManRealTimeInfo} from "@/app/classes/solarManApi";
-import {Battery100Icon, BoltIcon, HomeIcon, LightBulbIcon, SunIcon} from "@heroicons/react/24/outline";
+import {BoltIcon, HomeIcon, LightBulbIcon, SunIcon} from "@heroicons/react/24/outline";
 import smStyles from "./solarMan.module.css";
 import globalStyles from "@/app/globals.module.css";
 
@@ -16,12 +16,12 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
         if (Math.abs(kw) <= 0.03) kw = 0;
         return kw;
     }
-    
+
     const format = (watt: number | null | undefined) => {
         const kw = prepareValue(watt);
         return `${kw.toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})}`;
     }
-    
+
     const renderIcon = (icon: any, color: string, size = "10") => {
         return (
             <div className={`w-${size} h-${size} ${color}`}>
@@ -29,7 +29,7 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
             </div>
         );
     }
-    
+
     const renderLabel = (label: string) => <div className={`${globalStyles.label} whitespace-nowrap`}>{label}</div>;
 
     const renderRealTimeStat = (
@@ -54,7 +54,7 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
             </div>
         );
     }
-    
+
     const renderCorner = (
         label: string,
         color: string,
@@ -62,9 +62,9 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
         value: number,
         right = false
     ) => {
-        if(prepareValue(value) === 0)
+        if (prepareValue(value) === 0)
             color = "text-inactive";
-        
+
         return (
             <div className={["flex", right ? "text-right justify-end" : ""].join(" ")}>
                 {right && renderRealTimeStat(color, value, label, right)}
@@ -79,9 +79,9 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
     }
 
     const renderGrid = () => {
-        if(prepareValue(realTimeData.purchasePower)) 
+        if (prepareValue(realTimeData.purchasePower))
             return renderCorner("From Grid", "text-negative", <BoltIcon/>, realTimeData.purchasePower ?? 0, true);
-        if(prepareValue(realTimeData.gridPower))
+        if (prepareValue(realTimeData.gridPower))
             return renderCorner("To Grid", "text-positive", <BoltIcon/>, realTimeData.gridPower ?? 0, true);
         return renderCorner("Grid", "", <BoltIcon/>, 0, true);
     }
@@ -103,11 +103,11 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
             ].join(" ")}>{realTimeData.batterySoc}%</span>
         );
     }
-    
+
     const renderBattery = () => {
-        if(prepareValue(realTimeData.chargePower))
+        if (prepareValue(realTimeData.chargePower))
             return renderCorner("Charging Battery", "text-positive", renderBatteryIcon(), realTimeData.chargePower ?? 0);
-        if(prepareValue(realTimeData.dischargePower))
+        if (prepareValue(realTimeData.dischargePower))
             return renderCorner("Discharging Battery", "text-neutral2", renderBatteryIcon(), realTimeData.dischargePower ?? 0);
         return renderCorner("Battery", "", renderBatteryIcon(), 0, true);
     }
@@ -145,8 +145,8 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
     const renderProductionFlow = () => {
 
         const animate =
-            prepareValue(realTimeData.generationPower ?? 0) > 0 
-                ? smStyles.animateLeftToRight 
+            prepareValue(realTimeData.generationPower ?? 0) > 0
+                ? smStyles.animateLeftToRight
                 : "hidden";
 
         return renderFlow(
@@ -162,8 +162,10 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
 
         const animate =
             prepareValue(realTimeData.purchasePower ?? 0) > 0
-                ? smStyles.animateRightToLeft 
-                : " hidden";
+                ? smStyles.animateRightToLeft
+                : prepareValue(realTimeData.gridPower ?? 0) > 0
+                    ? smStyles.animateLeftToRight
+                    : "hidden";
 
         return renderFlow(
             "bg-slate-500",
@@ -177,10 +179,10 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
     const renderBatteryFlow = () => {
 
         const animate =
-            Math.abs(realTimeData.chargePower ?? 0) > 0
+            prepareValue(realTimeData.chargePower ?? 0) > 0
                 ? smStyles.animateRightToLeft
-                : Math.abs(realTimeData.dischargePower ?? 0) > 0
-                    ? smStyles.animateLeftToRight 
+                : prepareValue(realTimeData.dischargePower ?? 0) > 0
+                    ? smStyles.animateLeftToRight
                     : "hidden";
 
         return renderFlow(
@@ -194,8 +196,8 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
 
     const renderUsageFlow = () => {
 
-        const animate = prepareValue(realTimeData.usePower) 
-            ? smStyles.animateLeftToRight 
+        const animate = prepareValue(realTimeData.usePower)
+            ? smStyles.animateLeftToRight
             : "hidden";
 
         return renderFlow(
