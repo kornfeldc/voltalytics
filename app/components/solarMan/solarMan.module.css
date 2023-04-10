@@ -23,7 +23,7 @@
 }
 
 .battery {
-    @apply rounded-md text-white text-sm py-0.5 px-2;
+    @apply whitespace-nowrap rounded-md text-white text-xs py-2 px-1;
 }
 
 .grid > div {
@@ -32,4 +32,30 @@
 
 .grid > div > div {
     @apply w-1/2; 
+}
+
+@keyframes leftToRight {
+    0% {
+        left: 0;
+    }
+    25% {
+        left: 25%;
+    }
+    50% {
+        left: 50%;
+    }
+    775% {
+        left: 75%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+.animateLeftToRight {
+    animation: leftToRight 2s linear infinite;
+}
+
+.animateRightToLeft {
+    animation: leftToRight 2s linear infinite reverse;
 }
