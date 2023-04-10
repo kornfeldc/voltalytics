@@ -104,21 +104,22 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
     const renderBatteryIcon = () => {
         if (!realTimeData) return;
         const rotation = "transform rotate-[-90deg]";
-        const icon = 
-            realTimeData.batterySoc ?? 0 >= 80 
+        const icon =
+            (realTimeData.batterySoc ?? 0) >= 80
                 ? <Battery100Icon className={rotation}/>
-                : realTimeData.batterySoc ?? 0 >= 50 
-        ? <Battery50Icon className={rotation}/> : <Battery0Icon className={rotation}/>;
-        
+                : (realTimeData.batterySoc ?? 0) >= 30
+                    ? <Battery50Icon className={rotation}/>
+                    : <Battery0Icon className={rotation}/>;
+
         const color = "";// getBatteryColor(realTimeData.batterySoc ?? 0);
-      
+
         return (
             <div className={"flex flex-col justify-center"}>
-                {renderIcon(icon,color)}
+                {renderIcon(icon, color)}
                 <span className={[color, "text-xs text-center"].join(" ")}>{realTimeData.batterySoc}%</span>
             </div>
         );
-        
+
         // return (
         //     <span className={[
         //         "mr-1",
