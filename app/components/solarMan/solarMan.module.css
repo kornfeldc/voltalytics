@@ -7,19 +7,19 @@
 }
 
 .batteryFull {
-    @apply bg-green-600 dark:bg-teal-600;
+    @apply text-green-600 dark:text-teal-600;
 }
 
 .batteryMedium {
-    @apply bg-blue-500;
+    @apply text-blue-500;
 }
 
 .batteryLow {
-    @apply bg-amber-600;
+    @apply text-amber-600;
 }
 
 .batteryEmpty {
-    @apply bg-red-600;
+    @apply text-red-600;
 }
 
 .battery {

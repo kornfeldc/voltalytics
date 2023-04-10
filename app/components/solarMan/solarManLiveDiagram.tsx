@@ -1,6 +1,14 @@
 import React from "react";
 import {ISolarManRealTimeInfo} from "@/app/classes/solarManApi";
-import {BoltIcon, HomeIcon, LightBulbIcon, SunIcon} from "@heroicons/react/24/outline";
+import {
+    Battery0Icon,
+    Battery100Icon,
+    Battery50Icon,
+    BoltIcon,
+    HomeIcon,
+    LightBulbIcon,
+    SunIcon
+} from "@heroicons/react/24/outline";
 import smStyles from "./solarMan.module.css";
 import globalStyles from "@/app/globals.module.css";
 
@@ -40,14 +48,14 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
         additionalRenderFunction: JSX.Element | undefined = undefined) => {
 
         return (
-            <div className={right ? "text-right" : ""}>
+            <div className={right ? "text-right mr-2" : "ml-2"}>
                 <div className={[
                     value ? color : "text-inactive",
                     smStyles.stat,
                     right ? smStyles.statRight : ""
                 ].join(" ")}>
                     <span className={!right ? "mr-2" : ""}>{format(value)}&nbsp;<span
-                        className="text-xs">kWh</span></span>
+                        className="text-xs">kW</span></span>
                     {additionalRenderFunction && additionalRenderFunction}
                 </div>
                 {renderLabel(label)}
@@ -95,13 +103,29 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
 
     const renderBatteryIcon = () => {
         if (!realTimeData) return;
+        const rotation = "transform rotate-[-90deg]";
+        const icon = 
+            realTimeData.batterySoc ?? 0 >= 80 
+                ? <Battery100Icon className={rotation}/>
+                : realTimeData.batterySoc ?? 0 >= 50 
+        ? <Battery50Icon className={rotation}/> : <Battery0Icon className={rotation}/>;
+        
+        const color = "";// getBatteryColor(realTimeData.batterySoc ?? 0);
+      
         return (
-            <span className={[
-                "mr-1",
-                smStyles.battery,
-                getBatteryColor(realTimeData.batterySoc ?? 0)
-            ].join(" ")}>{realTimeData.batterySoc}%</span>
+            <div className={"flex flex-col justify-center"}>
+                {renderIcon(icon,color)}
+                <span className={[color, "text-xs text-center"].join(" ")}>{realTimeData.batterySoc}%</span>
+            </div>
         );
+        
+        // return (
+        //     <span className={[
+        //         "mr-1",
+        //         smStyles.battery,
+        //         getBatteryColor(realTimeData.batterySoc ?? 0)
+        //     ].join(" ")}>{realTimeData.batterySoc}%</span>
+        // );
     }
 
     const renderBattery = () => {

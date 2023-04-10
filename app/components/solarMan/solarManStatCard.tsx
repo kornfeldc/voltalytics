@@ -58,7 +58,7 @@ export default function SolarManStatCard({
                     right ? smStyles.statRight : ""
                 ].join(" ")}>
                     <span className={!right ? "mr-2" : ""}>{format(value)}&nbsp;<span
-                        className="text-xs">kW</span></span>
+                        className="text-xs">kWh</span></span>
                 </div>
                 {renderLabel(label)}
             </div>
