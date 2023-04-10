@@ -4,14 +4,14 @@ import {ISolarManRealTimeInfo, SolarManApi} from "@/app/classes/solarManApi";
 import {IUser} from "@/app/classes/db";
 import moment from "moment";
 import LoadingSpinner from "@/app/components/loadingSpinner";
-import smStyles from "./solarManCard.module.css";
+import smStyles from "./solarMan.module.css";
 import globalStyles from "../../globals.module.css";
 
 interface SolarManCardProps {
     user: IUser;
 }
 
-export default function SolarManCard({user}: SolarManCardProps) {
+export default function SolarManRealTimeCard({user}: SolarManCardProps) {
 
     const [realTimeData, setRealTimeData] = useState<ISolarManRealTimeInfo | undefined>();
     const [loading, setLoading] = useState(true);

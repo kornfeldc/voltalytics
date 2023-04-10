@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import PullToRefresh from "@/app/components/pullToRefresh";
 import {useSession} from "next-auth/react";
 import {Db, IUser} from "@/app/classes/db";
-import SolarManCard from "@/app/components/solarMan/solarManCard";
+import SolarManRealTimeCard from "@/app/components/solarMan/solarManRealTimeCard";
 import SolarManStatCard from "@/app/components/solarMan/solarManStatCard";
 import Link from "next/link";
 import moment from "moment";
@@ -48,7 +48,7 @@ export default function DashboardPage() {
             {renderSolarManCard &&
                 <div>
                     <div className="mb-4">
-                        <SolarManCard user={user!}/>
+                        <SolarManRealTimeCard user={user!}/>
                     </div>
                     <div className="mb-4 flex">
                         <div className="flex-auto mr-1">

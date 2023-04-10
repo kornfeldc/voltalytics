@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {ISolarManStationDataItem, SolarManApi} from "@/app/classes/solarManApi";
 import {IUser} from "@/app/classes/db";
 import LoadingSpinner from "@/app/components/loadingSpinner";
-import smStyles from "@/app/components/solarMan/solarManCard.module.css";
+import smStyles from "@/app/components/solarMan/solarMan.module.css";
 import globalStyles from "@/app/globals.module.css";
 import moment from "moment";
 
