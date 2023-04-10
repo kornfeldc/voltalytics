@@ -12,7 +12,7 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
 
     const prepareValue = (watt: number | null | undefined): number => {
         if (!watt) return 0;
-        let kw = watt / 1000;
+        let kw = Math.abs(watt / 1000);
         if (Math.abs(kw) <= 0.03) kw = 0;
         return kw;
     }
@@ -22,9 +22,9 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
         return `${kw.toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})}`;
     }
 
-    const renderIcon = (icon: any, color: string, size = "10") => {
+    const renderIcon = (icon: any, color: string) => {
         return (
-            <div className={`w-${size} h-${size} ${color}`}>
+            <div className={`w-10 h-10 ${color}`}>
                 {icon}
             </div>
         );
@@ -119,7 +119,7 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
     const renderHouse = () => {
         return (
             <div className={"flex justify-center items-center"}>
-                {renderIcon(<HomeIcon></HomeIcon>, "text-inactive", "12")}
+                {renderIcon(<HomeIcon></HomeIcon>, "text-inactive")}
             </div>
         );
     }
