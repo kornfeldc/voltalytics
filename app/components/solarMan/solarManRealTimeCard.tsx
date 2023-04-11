@@ -5,6 +5,7 @@ import {IUser} from "@/app/classes/db";
 import moment from "moment";
 import LoadingSpinner from "@/app/components/loadingSpinner";
 import SolarManLiveDiagram from "@/app/components/solarMan/solarManLiveDiagram";
+import SolarManDayChartContainer from "@/app/components/solarMan/solarManDayChartContainer";
 
 interface SolarManCardProps {
     user: IUser;
@@ -35,6 +36,9 @@ export default function SolarManRealTimeCard({user}: SolarManCardProps) {
             <div>
                 <h2 className={"mb-2"}>{getLastUpdateTime(realTimeData.lastUpdateTime)}</h2>
                 <SolarManLiveDiagram realTimeData={realTimeData}></SolarManLiveDiagram>
+                <div className={"mt-4"}>
+                    <SolarManDayChartContainer day={moment().format("YYYY-MM-DD")} showLegend={false}></SolarManDayChartContainer>
+                </div>
             </div>
         );
 

@@ -31,6 +31,24 @@ export interface ISolarManStationDataItem {
     dischargeValue: number | null;
 }
 
+export interface ISolarManFrameInfo {
+    success: boolean | null;
+    stationDataItems: Array<ISolarManFrameStationDataItem>;
+}
+
+export interface ISolarManFrameStationDataItem {
+    generationPower: number | null;
+    usePower: number | null;
+    gridPower: number | null;
+    purchasePower: number | null;
+    wirePower: number | null;
+    chargePower: number | null;
+    dischargePower: number | null;
+    batteryPower: number | null;
+    batterySoc: number | null;
+    dateTime: number | null;
+}
+
 export class SolarManApi {
     static solarManUrl = "/api/proxy";
 
@@ -191,6 +209,57 @@ export class SolarManApi {
                 if (!result?.requestId) return;
 
                 return result as ISolarManStatInfo;
+            }
+        );
+    }
+    
+    static async getFrameData(
+        user: IUser,
+        day: string = moment().format("YYYY-MM-DD")
+    ): Promise<ISolarManFrameInfo | undefined> {
+
+        const isToday = moment(day).isSame(moment(), "day");
+        const isYesterday = moment(day).add(-1, "days").isSame(moment(), "day");
+
+        let cacheSeconds =
+            isToday ? 30 : isYesterday ? 60 * 5 : 60 * 60 * 24;
+
+        const key = `solarMan_frameData_${day}`;
+        return await VoltCache.get(
+            key,
+            user.email,
+            cacheSeconds,
+            async (): Promise<any> => {
+
+                const token = await this.getToken(user);
+                if (!token) return;
+
+                const stationId = await this.getStationId(user, token);
+                if (!stationId) return;
+
+                const url = `${this.solarManUrl}/station/v1.0/history?language=en`;
+                const body = {
+                    stationId,
+                    timeType: 1,
+                    startTime: moment(day).format("YYYY-MM-DD"),
+                    endTime: moment(day).format("YYYY-MM-DD")
+                } as any;
+
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                if (!response.ok) return;
+
+                const result = await response.json();
+                if (!result?.requestId) return;
+
+                return result as ISolarManFrameInfo;
             }
         );
     }
