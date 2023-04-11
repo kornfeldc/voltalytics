@@ -119,14 +119,6 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
                 <span className={[color, "text-xs text-center"].join(" ")}>{realTimeData.batterySoc}%</span>
             </div>
         );
-
-        // return (
-        //     <span className={[
-        //         "mr-1",
-        //         smStyles.battery,
-        //         getBatteryColor(realTimeData.batterySoc ?? 0)
-        //     ].join(" ")}>{realTimeData.batterySoc}%</span>
-        // );
     }
 
     const renderBattery = () => {
@@ -134,7 +126,7 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
             return renderCorner("Charging Battery", "text-positive", renderBatteryIcon(), realTimeData.chargePower ?? 0);
         if (prepareValue(realTimeData.dischargePower))
             return renderCorner("Discharging Battery", "text-neutral2", renderBatteryIcon(), realTimeData.dischargePower ?? 0);
-        return renderCorner("Battery", "", renderBatteryIcon(), 0, true);
+        return renderCorner("Battery", "", renderBatteryIcon(), 0);
     }
 
     const renderUsage = () => {
