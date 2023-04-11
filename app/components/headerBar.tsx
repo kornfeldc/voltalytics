@@ -3,6 +3,7 @@ import React from "react";
 import {BoltIcon, UserCircleIcon} from "@heroicons/react/24/outline";
 import Link from "next/link";
 import {useSession} from "next-auth/react";
+import Image from "next/image";
 
 export default function HeaderBar() {
 
@@ -26,8 +27,11 @@ export default function HeaderBar() {
             <Link href="/user">
                 {session?.user?.image &&
                     (
-                        <img
-                            className={"w-8 h-8 rounded-full mr-4 my-2 bg-amber-400 border-2 border-amber-400"}
+                        <Image
+                            width={2}
+                            height={2} 
+                            quality={100}
+                            className={"w-8 h-8 rounded-full mr-3 my-2 bg-amber-400 border-2 border-amber-400"}
                             src={session.user.image}
                             alt={session.user.name!}/>
                     )

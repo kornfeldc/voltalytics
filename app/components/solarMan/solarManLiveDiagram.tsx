@@ -10,7 +10,6 @@ import {
     SunIcon
 } from "@heroicons/react/24/outline";
 import smStyles from "./solarMan.module.css";
-import globalStyles from "@/app/globals.module.css";
 
 interface SolarManLiveDiagramProps {
     realTimeData: ISolarManRealTimeInfo;
@@ -40,7 +39,7 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
         );
     }
 
-    const renderLabel = (label: string) => <div className={`${globalStyles.label} whitespace-nowrap`}>{label}</div>;
+    const renderLabel = (label: string) => <div className={`${"label"} whitespace-nowrap`}>{label}</div>;
 
     const renderRealTimeStat = (
         color: string,

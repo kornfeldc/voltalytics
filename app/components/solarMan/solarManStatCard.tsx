@@ -4,7 +4,6 @@ import {ISolarManStationDataItem, SolarManApi} from "@/app/classes/solarManApi";
 import {IUser} from "@/app/classes/db";
 import LoadingSpinner from "@/app/components/loadingSpinner";
 import smStyles from "@/app/components/solarMan/solarMan.module.css";
-import globalStyles from "@/app/globals.module.css";
 import moment from "moment";
 
 interface SolarManStatCardProps {
@@ -42,7 +41,7 @@ export default function SolarManStatCard({
         const val = parseFloat((kw ?? 0).toFixed(digits));
         return `${(kw ?? 0).toLocaleString(undefined, {maximumFractionDigits: digits, minimumFractionDigits: digits})}`;
     }
-    const renderLabel = (label: string) => <div className={globalStyles.label}>{label}</div>;
+    const renderLabel = (label: string) => <div className={"label"}>{label}</div>;
 
     const renderStatValue = (
         color: string,
