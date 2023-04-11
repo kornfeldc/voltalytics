@@ -18,6 +18,8 @@ interface SolarManLiveDiagramProps {
 
 export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramProps) {
 
+    const iconSize = 30;
+    
     const prepareValue = (watt: number | null | undefined): number => {
         if (!watt) return 0;
         let kw = Math.abs(watt / 1000);
@@ -32,7 +34,7 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
 
     const renderIcon = (icon: any, color: string) => {
         return (
-            <div className={`w-10 h-10 ${color}`}>
+            <div className={`${color}`}>
                 {icon}
             </div>
         );
@@ -83,15 +85,15 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
     }
 
     const renderProduction = () => {
-        return renderCorner("Production", "text-neutral", <SunIcon/>, realTimeData.generationPower ?? 0);
+        return renderCorner("Production", "text-neutral", <SunIcon width={iconSize} height={iconSize}/>, realTimeData.generationPower ?? 0);
     }
 
     const renderGrid = () => {
         if (prepareValue(realTimeData.purchasePower))
-            return renderCorner("From Grid", "text-negative", <BoltIcon/>, realTimeData.purchasePower ?? 0, true);
+            return renderCorner("From Grid", "text-negative", <BoltIcon width={iconSize} height={iconSize}/>, realTimeData.purchasePower ?? 0, true);
         if (prepareValue(realTimeData.gridPower))
-            return renderCorner("To Grid", "text-positive", <BoltIcon/>, realTimeData.gridPower ?? 0, true);
-        return renderCorner("Grid", "", <BoltIcon/>, 0, true);
+            return renderCorner("To Grid", "text-positive", <BoltIcon width={iconSize} height={iconSize}/>, realTimeData.gridPower ?? 0, true);
+        return renderCorner("Grid", "", <BoltIcon width={iconSize} height={iconSize}/>, 0, true);
     }
 
     const getBatteryColor = (percentage: number) => (
@@ -106,10 +108,10 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
         const rotation = "transform rotate-[-90deg]";
         const icon =
             (realTimeData.batterySoc ?? 0) >= 80
-                ? <Battery100Icon className={rotation}/>
+                ? <Battery100Icon width={iconSize} height={iconSize} className={rotation}/>
                 : (realTimeData.batterySoc ?? 0) >= 30
-                    ? <Battery50Icon className={rotation}/>
-                    : <Battery0Icon className={rotation}/>;
+                    ? <Battery50Icon width={iconSize} height={iconSize} className={rotation}/>
+                    : <Battery0Icon width={iconSize} height={iconSize} className={rotation}/>;
 
         const color = "";// getBatteryColor(realTimeData.batterySoc ?? 0);
 
@@ -130,13 +132,13 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
     }
 
     const renderUsage = () => {
-        return renderCorner("Usage", "text-warning", <LightBulbIcon/>, realTimeData.usePower ?? 0, true);
+        return renderCorner("Usage", "text-warning", <LightBulbIcon width={iconSize} height={iconSize}/>, realTimeData.usePower ?? 0, true);
     }
 
     const renderHouse = () => {
         return (
             <div className={"flex justify-center items-center"}>
-                {renderIcon(<HomeIcon></HomeIcon>, "text-inactive")}
+                {renderIcon(<HomeIcon width={iconSize} height={iconSize}></HomeIcon>, "text-inactive")}
             </div>
         );
     }

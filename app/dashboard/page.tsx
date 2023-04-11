@@ -50,13 +50,13 @@ export default function DashboardPage() {
                     <div className="mb-4">
                         <SolarManRealTimeCard user={user!}/>
                     </div>
-                    <div className="mb-4 flex">
-                        <div className="flex-auto mr-1">
+                    <div className="mb-4 flex flex-col min-[410px]:flex-row">
+                        <div className="flex-auto min-[410px]:mr-1 max-[409px]:mb-4">
                             <Link href={`/solarman/days/${moment().format("YYYY-MM-DD")}`}>
                                 <SolarManStatCard user={user!}/>
                             </Link>
                         </div>
-                        <div className="flex-auto ml-1">
+                        <div className="flex-auto min-[410px]:ml-1">
                             <Link href={`/solarman/months/${moment().startOf("month").format("YYYY-MM-DD")}`}>
                                 <SolarManStatCard user={user!} range="month" showComma={false}/>
                             </Link>
