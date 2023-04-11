@@ -107,7 +107,7 @@ export class SolarManApi {
         return await VoltCache.get(
             "solarMan_realTimeData",
             user.email,
-            30,
+            60,
             async (): Promise<any> => {
                 const token = await this.getToken(user);
                 if (!token) return;
@@ -136,24 +136,21 @@ export class SolarManApi {
     }
 
     static async getStatistics(
-        user: IUser, 
+        user: IUser,
         day: string = moment().format("YYYY-MM-DD"),
-        range: "day"|"month"|"year" = "day"
-        ): Promise<ISolarManStatInfo | undefined> {
-       
-        let cacheSeconds = 30;
-        if(
-            (range === "day" && moment(day).startOf("day").isBefore(moment())) ||
-            (range === "month" && moment(day).startOf("month").isBefore(moment().startOf("month"))) ||
-            (range === "year" && moment(day).startOf("year").isBefore(moment().startOf("year")))) {
-                // past day or past month or past year => values wont change - set a high cache expiration
-                cacheSeconds = 999999;
-        }    
-            
-        
+        range: "day" | "month" | "year" = "day"
+    ): Promise<ISolarManStatInfo | undefined> {
+
+        const isToday = range === "day" && moment(day).isSame(moment(), "day");
+        const isYesterday = range === "day" && moment(day).add(-1, "days").isSame(moment(), "day");
+        const isThisMonth = range === "month" && moment(day).isSame(moment(), "month");
+
+        let cacheSeconds =
+            isToday ? 30 : isYesterday || isThisMonth ? 60 * 5 : 60 * 60 * 24;
+
         const key = `solarMan_${range}_${day}`;
         return await VoltCache.get(
-            key, 
+            key,
             user.email,
             cacheSeconds,
             async (): Promise<any> => {
@@ -168,18 +165,17 @@ export class SolarManApi {
                 const body = {
                     stationId
                 } as any;
-                
-                if(range === "day") {
+
+                if (range === "day") {
                     body.timeType = 2;
                     body.startTime = moment(day).format("YYYY-MM-DD")
                     body.endTime = moment(day).format("YYYY-MM-DD")
-                }
-                else if(range === "month") {
+                } else if (range === "month") {
                     body.timeType = 3;
                     body.startTime = moment(day).format("YYYY-MM")
                     body.endTime = moment(day).format("YYYY-MM")
                 }
-                
+
                 const response = await fetch(url, {
                     method: "POST",
                     headers: {
