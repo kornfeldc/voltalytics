@@ -9,7 +9,6 @@ export default function HeaderBar() {
 
     const {version} = require('@/package.json');
     const {data: session} = useSession();
-    // const session = {} as any;
 
     return (
         <div className="flex bg-slate-50 shadow-md shadow-slate-300
@@ -28,8 +27,8 @@ export default function HeaderBar() {
                 {session?.user?.image &&
                     (
                         <Image
-                            width={2}
-                            height={2} 
+                            width={20}
+                            height={20} 
                             quality={100}
                             className={"w-8 h-8 rounded-full mr-3 my-2 bg-amber-400 border-2 border-amber-400"}
                             src={session.user.image}
