@@ -9,7 +9,7 @@ const proxyHandler = (req, res) => {
 };
 
 const proxy = createProxyMiddleware({
-    target: 'https://api.solarmanpv.com',
+    target: 'https://globalapi.solarmanpv.com',
     changeOrigin: true,
     pathRewrite: {
         '^/api/proxy': '',

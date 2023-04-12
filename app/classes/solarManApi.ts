@@ -51,10 +51,11 @@ export interface ISolarManFrameStationDataItem {
 
 export class SolarManApi {
     static solarManUrl = "/api/proxy";
+    static keyVersion = 2;
 
     static async getToken(user: IUser): Promise<string | undefined> {
         return await VoltCache.get(
-            "solarMan_token",
+            `solarMan_token_${this.keyVersion}`,
             user.email,
             60 * 5 /* 5min */,
             async (): Promise<any> => {
@@ -85,7 +86,7 @@ export class SolarManApi {
 
     static async getStationId(user: IUser, token: string | undefined = undefined): Promise<number | undefined> {
         return await VoltCache.get(
-            "solarMan_stationId",
+            `solarMan_stationId_${this.keyVersion}`,
             user.email,
             999999999,
             async (): Promise<any> => {
@@ -123,7 +124,7 @@ export class SolarManApi {
 
     static async getRealtimeInfo(user: IUser): Promise<ISolarManRealTimeInfo | undefined> {
         return await VoltCache.get(
-            "solarMan_realTimeData",
+            `solarMan_realTimeData_${this.keyVersion}`,
             user.email,
             60,
             async (): Promise<any> => {
@@ -166,7 +167,7 @@ export class SolarManApi {
         let cacheSeconds =
             isToday ? 30 : isYesterday || isThisMonth ? 60 * 5 : 60 * 60 * 24;
 
-        const key = `solarMan_${range}_${day}`;
+        const key = `solarMan_${range}_${day}_${this.keyVersion}`;
         return await VoltCache.get(
             key,
             user.email,
@@ -224,7 +225,7 @@ export class SolarManApi {
         let cacheSeconds =
             isToday ? 30 : isYesterday ? 60 * 5 : 60 * 60 * 24;
 
-        const key = `solarMan_frameData_${day}`;
+        const key = `solarMan_frameData_${day}_${this.keyVersion}`;
         return await VoltCache.get(
             key,
             user.email,
