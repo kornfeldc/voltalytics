@@ -6,7 +6,7 @@ import {ISolarManFrameInfo, SolarManApi} from "@/app/classes/solarManApi";
 import SolarManDayChart from "@/app/components/solarMan/solarManDayChart";
 import LoadingSpinner from "@/app/components/loadingSpinner";
 
-export default function SolarManDayChartContainer({day, showLegend}: { day: string, showLegend?: boolean }) {
+export default function SolarManDayChartContainer({day, showLegend, showWholeDay}: { day: string, showLegend?: boolean, showWholeDay?: boolean }) {
 
     const {data: session} = useSession();
     const [user, setUser] = useState<IUser>();
@@ -53,7 +53,7 @@ export default function SolarManDayChartContainer({day, showLegend}: { day: stri
                 </div>
             )}
             {!loading && renderSolarManCard && (dayData?.stationDataItems?.length ?? 0) > 0 &&
-                <SolarManDayChart data={dayData?.stationDataItems!} showLegend={showLegend ?? true}></SolarManDayChart>
+                <SolarManDayChart data={dayData?.stationDataItems!} showLegend={showLegend ?? true} showWholeDay={showWholeDay ?? true}></SolarManDayChart>
             }
         </div>
     );

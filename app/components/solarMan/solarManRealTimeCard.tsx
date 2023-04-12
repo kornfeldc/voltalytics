@@ -37,7 +37,7 @@ export default function SolarManRealTimeCard({user}: SolarManCardProps) {
                 <h2 className={"mb-2"}>{getLastUpdateTime(realTimeData.lastUpdateTime)}</h2>
                 <SolarManLiveDiagram realTimeData={realTimeData}></SolarManLiveDiagram>
                 <div className={"mt-4"}>
-                    <SolarManDayChartContainer day={moment().format("YYYY-MM-DD")} showLegend={false}></SolarManDayChartContainer>
+                    <SolarManDayChartContainer day={moment().format("YYYY-MM-DD")} showLegend={false} showWholeDay={false}></SolarManDayChartContainer>
                 </div>
             </div>
         );

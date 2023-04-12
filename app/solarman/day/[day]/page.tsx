@@ -7,7 +7,7 @@ export default function SolarManDayPage({params}: { params: any }) {
     return (
         <div className={"mt-4 px-0.5"}>
             <h1 className={"text-center pb-2"}>{moment(params.day).format("DD.MM.YYYY")}</h1>
-            <SolarManDayChartContainer day={params.day}></SolarManDayChartContainer>
+            <SolarManDayChartContainer day={params.day} showWholeDay={true}></SolarManDayChartContainer>
         </div>
     );
 }
