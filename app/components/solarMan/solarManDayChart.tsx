@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {ISolarManFrameStationDataItem} from "@/app/classes/solarManApi";
 import {
     CategoryScale,
@@ -13,6 +13,7 @@ import {
 } from "chart.js";
 import {Line} from 'react-chartjs-2';
 import moment from "moment";
+import {useOrientationChange} from "@/app/hooks/useOrientationChange";
 
 interface SolarManDayChartProps {
     data: Array<ISolarManFrameStationDataItem>;
@@ -22,6 +23,13 @@ interface SolarManDayChartProps {
 
 export default function SolarManDayChart({data, showLegend, showWholeDay}: SolarManDayChartProps) {
 
+
+    const orientation = useOrientationChange();
+    const [, setRerender] = useState(false);
+    useEffect(() => {
+            setRerender(prevState => !prevState);
+    }, [orientation]);
+    
     if (showWholeDay && data?.length > 0) {
         let act = moment(data[0].dateTime! * 1000);
         let end = moment(act).endOf("day");
@@ -66,7 +74,7 @@ export default function SolarManDayChart({data, showLegend, showWholeDay}: Solar
                     callback: (value: any, index: number) => {
                         const val = labels[index];
                         const displayLabels = ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "23:55"];
-                        return displayLabels.includes(val) 
+                        return displayLabels.includes(val)
                             ? val == "23:55" ? "24:00" : val : null;
                     }
                 }
@@ -112,5 +120,5 @@ export default function SolarManDayChart({data, showLegend, showWholeDay}: Solar
         };
     };
 
-    return <Line options={options} data={mapLineData()}/>;
+    return (<div><Line redraw={true} options={options} data={mapLineData()}/></div>);
 }
