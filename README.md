@@ -16,9 +16,11 @@ Voltalytics is an open-source project designed to display real-time electricity 
 
 - [Next.js 13](https://beta.nextjs.org/docs)
 - [Tailwind CSS](https://tailwindcss.com/)
-- [aWATTar API](https://www.awattar.at/services/api)
+- [chartJS](https://www.chartjs.org)
 - [Vercel](https://vercel.com) (hosting)
 - [Supabase](https://supabase.io) (database)
+- [aWATTar API](https://www.awattar.at/services/api)
+- SolarMan API
 
 ## Screenshots
 
