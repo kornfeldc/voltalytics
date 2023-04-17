@@ -51,7 +51,7 @@ export interface ISolarManFrameStationDataItem {
 
 export class SolarManApi {
     static solarManUrl = "/api/proxy";
-    static keyVersion = 2;
+    static keyVersion = 3;
 
     static async getToken(user: IUser): Promise<string | undefined> {
         return await VoltCache.get(
