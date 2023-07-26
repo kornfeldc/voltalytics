@@ -13,6 +13,7 @@ export class VoltCache {
         promise: () => Promise<any>
     ): Promise<any> {
         const cacheKey = `${key}_${user}`;
+        alert("get from cache "+cacheKey);
         try {
             const cachedInfo = localStorage.getItem(cacheKey);
 
@@ -34,6 +35,8 @@ export class VoltCache {
                 //
             }
         }
+        
+        try {
 
         const data = await promise();
         localStorage.setItem(
@@ -44,5 +47,9 @@ export class VoltCache {
             })
         );
         return data;
+        }
+        catch(e1: any) {
+            alert("vc e1 "+e1.description);
+        }
     }
 }
