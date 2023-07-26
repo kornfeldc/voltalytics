@@ -39,6 +39,9 @@ export class VoltCache {
         try {
 
         const data = await promise();
+        alert("got data");
+        alert(data);
+        alert(JSON.stringify(data));
         localStorage.setItem(
             cacheKey,
             JSON.stringify({
