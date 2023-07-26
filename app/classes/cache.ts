@@ -1,4 +1,3 @@
-"use client";
 import moment from "moment";
 
 interface IVoltCacheData {
@@ -14,7 +13,6 @@ export class VoltCache {
         promise: () => Promise<any>
     ): Promise<any> {
         const cacheKey = `${key}_${user}`;
-        alert("get from cache "+cacheKey);
         try {
             const cachedInfo = localStorage.getItem(cacheKey);
 
@@ -26,34 +24,30 @@ export class VoltCache {
                     localStorage.removeItem(cacheKey);
                 }
             }
-        }
-        catch(e) {
+        } catch (e) {
             // if an error occurs - try to remove the cache
             try {
                 localStorage.removeItem(cacheKey);
-            }
-            catch(e) {
+            } catch (e) {
                 //
             }
         }
-        
-        try {
 
         const data = await promise();
-        alert("got data");
-        alert(data);
-        alert(JSON.stringify(data));
-        localStorage.setItem(
-            cacheKey,
-            JSON.stringify({
-                obj: data,
-                expiresAt: moment().add(seconds,"seconds"),
-            })
-        );
+        try {
+            localStorage.setItem(
+                cacheKey,
+                JSON.stringify({
+                    obj: data,
+                    expiresAt: moment().add(seconds, "seconds"),
+                })
+            );
+        } catch (e) {
+            if (JSON.stringify(e).indexOf("exceeded") >= 0) {
+                // cache is full -> remove all
+                localStorage.clear();
+            }
+        }
         return data;
-        }
-        catch(e1: any) {
-            alert("vc e1 "+JSON.stringify(e1));
-        }
     }
 }
