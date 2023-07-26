@@ -52,7 +52,7 @@ export class VoltCache {
         return data;
         }
         catch(e1: any) {
-            alert("vc e1 "+e1.description);
+            alert("vc e1 "+JSON.stringify(e1));
         }
     }
 }
