@@ -13,11 +13,16 @@ export class AwattarApi {
             "",
             60 * 60 /*1 hour*/,
             async (): Promise<any> => {
+                try {
                 let url = `https://api.awattar.at/v1/marketdata?start=${start}`;
                 const res = await fetch(url);
                 if (res.ok)
                     return AwattarApi.parseResponse(await res.json());
                 return [];
+                }
+                catch(e: any) {
+                    alert(e.description);
+                }
             }
         )
         data = data.filter(entry => this.showEntry(entry, hours, offsetHours));
