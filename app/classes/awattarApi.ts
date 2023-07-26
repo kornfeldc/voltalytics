@@ -24,6 +24,7 @@ export class AwattarApi {
                 }
                 catch(e: any) {
                     alert(e.description);
+                    return [];
                 }
             }
         )
@@ -32,6 +33,7 @@ export class AwattarApi {
         }
         catch(e1: any) {
             alert("e1 "+e1.description);
+            return [];
         } 
     }
 
