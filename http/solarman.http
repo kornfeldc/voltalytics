@@ -1,0 +1,5 @@
+# get access token 
+POST https://globalapi.solarmanpv.com/account/v1.0/token?appId={{solarManAppId}}
+Content-Type: application/json
+
+{ "appSecret": "{{appSecret}}", "email": "{{solarManAppEmail}}", "password": "{{solarManAppPassword}}" }

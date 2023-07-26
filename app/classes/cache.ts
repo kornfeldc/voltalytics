@@ -13,14 +13,25 @@ export class VoltCache {
         promise: () => Promise<any>
     ): Promise<any> {
         const cacheKey = `${key}_${user}`;
-        const cachedInfo = localStorage.getItem(cacheKey);
+        try {
+            const cachedInfo = localStorage.getItem(cacheKey);
 
-        if (cachedInfo) {
-            const {obj, expiresAt} = JSON.parse(cachedInfo);
-            if (moment(expiresAt).isAfter(moment())) {
-                return obj;
-            } else {
+            if (cachedInfo) {
+                const {obj, expiresAt} = JSON.parse(cachedInfo);
+                if (moment(expiresAt).isAfter(moment())) {
+                    return obj;
+                } else {
+                    localStorage.removeItem(cacheKey);
+                }
+            }
+        }
+        catch(e) {
+            // if an error occurs - try to remove the cache
+            try {
                 localStorage.removeItem(cacheKey);
+            }
+            catch(e) {
+                //
             }
         }
 
