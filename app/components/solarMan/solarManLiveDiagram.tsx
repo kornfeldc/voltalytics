@@ -246,7 +246,6 @@ export default function SolarManLiveDiagram({realTimeData, currentPrice}: SolarM
 
     return (
         <div>
-            <div>price: {currentPrice}</div>
             <div className={"grid grid-cols-3"}>
                 <div>{renderProduction()}</div>
                 <div></div>
