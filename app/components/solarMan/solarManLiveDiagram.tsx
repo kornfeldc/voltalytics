@@ -13,12 +13,13 @@ import smStyles from "./solarMan.module.css";
 
 interface SolarManLiveDiagramProps {
     realTimeData: ISolarManRealTimeInfo;
+    currentPrice: number | undefined;
 }
 
-export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramProps) {
+export default function SolarManLiveDiagram({realTimeData, currentPrice}: SolarManLiveDiagramProps) {
 
     const iconSize = 30;
-    
+
     const prepareValue = (watt: number | null | undefined): number => {
         if (!watt) return 0;
         let kw = Math.abs(watt / 1000);
@@ -29,6 +30,11 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
     const format = (watt: number | null | undefined) => {
         const kw = prepareValue(watt);
         return `${kw.toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})}`;
+    }
+    
+    const formatCurr = (nr: number|null|undefined): string => {
+        if(!nr) return "";
+        return `${nr.toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})}`;
     }
 
     const renderIcon = (icon: any, color: string) => {
@@ -45,6 +51,7 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
         color: string,
         value: number | undefined | null,
         label: string,
+        doesAffectCosts: boolean,
         right = false,
         additionalRenderFunction: JSX.Element | undefined = undefined) => {
 
@@ -55,8 +62,13 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
                     smStyles.stat,
                     right ? smStyles.statRight : ""
                 ].join(" ")}>
-                    <span className={!right ? "mr-2" : ""}>{format(value)}&nbsp;<span
-                        className="text-xs">kW</span></span>
+                    <span className={!right ? "mr-2" : ""}>
+                        {format(value)}&nbsp;
+                        <span className="text-xs">kW</span>
+                        {doesAffectCosts && currentPrice
+                            ? <span className={"text-s " + (right ? "ml-2" : "mr-2")}>{formatCurr(currentPrice)}&nbsp;€</span> 
+                            : <template></template>}
+                    </span>
                     {additionalRenderFunction && additionalRenderFunction}
                 </div>
                 {renderLabel(label)}
@@ -69,6 +81,7 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
         color: string,
         icon: any,
         value: number,
+        doesAffectCosts: boolean,
         right = false
     ) => {
         if (prepareValue(value) === 0)
@@ -76,23 +89,26 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
 
         return (
             <div className={["flex", right ? "text-right justify-end" : ""].join(" ")}>
-                {right && renderRealTimeStat(color, value, label, right)}
+                {right && renderRealTimeStat(color, value, label, doesAffectCosts, right)}
                 {renderIcon(icon, color)}
-                {!right && renderRealTimeStat(color, value, label, right)}
+                {!right && renderRealTimeStat(color, value, label, doesAffectCosts, right)}
             </div>
         );
     }
 
     const renderProduction = () => {
-        return renderCorner("Production", "text-neutral", <SunIcon width={iconSize} height={iconSize}/>, realTimeData.generationPower ?? 0);
+        return renderCorner("Production", "text-neutral", <SunIcon width={iconSize}
+                                                                   height={iconSize}/>, realTimeData.generationPower ?? 0, false);
     }
 
     const renderGrid = () => {
         if (prepareValue(realTimeData.purchasePower))
-            return renderCorner("From Grid", "text-negative", <BoltIcon width={iconSize} height={iconSize}/>, realTimeData.purchasePower ?? 0, true);
+            return renderCorner("From Grid", "text-negative", <BoltIcon width={iconSize}
+                                                                        height={iconSize}/>, realTimeData.purchasePower ?? 0, true, true);
         if (prepareValue(realTimeData.gridPower))
-            return renderCorner("To Grid", "text-positive", <BoltIcon width={iconSize} height={iconSize}/>, realTimeData.gridPower ?? 0, true);
-        return renderCorner("Grid", "", <BoltIcon width={iconSize} height={iconSize}/>, 0, true);
+            return renderCorner("To Grid", "text-positive", <BoltIcon width={iconSize}
+                                                                      height={iconSize}/>, realTimeData.gridPower ?? 0, false, true);
+        return renderCorner("Grid", "", <BoltIcon width={iconSize} height={iconSize}/>, 0, false, true);
     }
 
     const getBatteryColor = (percentage: number) => (
@@ -124,14 +140,15 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
 
     const renderBattery = () => {
         if (prepareValue(realTimeData.chargePower))
-            return renderCorner("Charging Battery", "text-positive", renderBatteryIcon(), realTimeData.chargePower ?? 0);
+            return renderCorner("Charging Battery", "text-positive", renderBatteryIcon(), realTimeData.chargePower ?? 0, false);
         if (prepareValue(realTimeData.dischargePower))
-            return renderCorner("Discharging Battery", "text-neutral2", renderBatteryIcon(), realTimeData.dischargePower ?? 0);
-        return renderCorner("Battery", "", renderBatteryIcon(), 0);
+            return renderCorner("Discharging Battery", "text-neutral2", renderBatteryIcon(), realTimeData.dischargePower ?? 0, false);
+        return renderCorner("Battery", "", renderBatteryIcon(), 0, false);
     }
 
     const renderUsage = () => {
-        return renderCorner("Usage", "text-warning", <LightBulbIcon width={iconSize} height={iconSize}/>, realTimeData.usePower ?? 0, true);
+        return renderCorner("Usage", "text-warning", <LightBulbIcon width={iconSize}
+                                                                    height={iconSize}/>, realTimeData.usePower ?? 0, false, true);
     }
 
     const renderHouse = () => {
@@ -229,6 +246,7 @@ export default function SolarManLiveDiagram({realTimeData}: SolarManLiveDiagramP
 
     return (
         <div>
+            <div>price: {currentPrice}</div>
             <div className={"grid grid-cols-3"}>
                 <div>{renderProduction()}</div>
                 <div></div>

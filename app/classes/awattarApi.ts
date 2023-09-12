@@ -50,5 +50,12 @@ export class AwattarApi {
             };
         });
     }
+    
+    static async getCurrentPrice(): Promise<number|undefined> {
+        const data = await AwattarApi.getData();
+        const now = moment().startOf("hour");
+        const entry = data?.find(x => moment(x.time).isSame(now));
+        return entry?.grossPrice;
+    }
 
 }

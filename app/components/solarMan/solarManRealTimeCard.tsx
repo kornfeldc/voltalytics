@@ -6,6 +6,7 @@ import moment from "moment";
 import LoadingSpinner from "@/app/components/loadingSpinner";
 import SolarManLiveDiagram from "@/app/components/solarMan/solarManLiveDiagram";
 import SolarManDayChartContainer from "@/app/components/solarMan/solarManDayChartContainer";
+import {AwattarApi} from "@/app/classes/awattarApi";
 
 interface SolarManCardProps {
     user: IUser;
@@ -14,13 +15,17 @@ interface SolarManCardProps {
 export default function SolarManRealTimeCard({user}: SolarManCardProps) {
 
     const [realTimeData, setRealTimeData] = useState<ISolarManRealTimeInfo | undefined>();
+    const [currentPrice, setCurrentPrice] = useState<number|undefined>();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         setLoading(true);
         SolarManApi.getRealtimeInfo(user).then(data => {
             setRealTimeData(data);
-            setLoading(false);
+            AwattarApi.getCurrentPrice().then(price => {
+                setCurrentPrice(price);
+                setLoading(false);
+            });
         })
     }, [user]);
 
@@ -35,7 +40,7 @@ export default function SolarManRealTimeCard({user}: SolarManCardProps) {
         return (
             <div>
                 <h2 className={"mb-2"}>{getLastUpdateTime(realTimeData.lastUpdateTime)}</h2>
-                <SolarManLiveDiagram realTimeData={realTimeData}></SolarManLiveDiagram>
+                <SolarManLiveDiagram realTimeData={realTimeData} currentPrice={currentPrice}></SolarManLiveDiagram>
                 <div className={"mt-4"}>
                     <SolarManDayChartContainer day={moment().format("YYYY-MM-DD")} showLegend={false} showWholeDay={false}></SolarManDayChartContainer>
                 </div>
