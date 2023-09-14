@@ -66,7 +66,7 @@ export default function SolarManLiveDiagram({realTimeData, currentPrice}: SolarM
                         {format(value)}&nbsp;
                         <span className="text-xs">kW</span>
                         {doesAffectCosts && currentPrice
-                            ? <span className={"text-s " + (right ? "ml-2" : "mr-2")}>{formatCurr(currentPrice)}&nbsp;€</span> 
+                            ? <span className={"text-s " + (right ? "ml-2" : "mr-2")}>{formatCurr(currentPrice)}&nbsp;c</span> 
                             : <template></template>}
                     </span>
                     {additionalRenderFunction && additionalRenderFunction}
