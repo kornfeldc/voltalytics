@@ -22,14 +22,12 @@ interface SolarManDayChartProps {
 }
 
 export default function SolarManDayChart({data, showLegend, showWholeDay}: SolarManDayChartProps) {
-
-
     const orientation = useOrientationChange();
     const [, setRerender] = useState(false);
     useEffect(() => {
-            setRerender(prevState => !prevState);
+        setRerender(prevState => !prevState);
     }, [orientation]);
-    
+
     if (showWholeDay && data?.length > 0) {
         let act = moment(data[0].dateTime! * 1000);
         let end = moment(act).endOf("day");
@@ -84,14 +82,14 @@ export default function SolarManDayChart({data, showLegend, showWholeDay}: Solar
 
     if (!showLegend)
         options.plugins.legend.display = false;
-    
+
     const getRealPurchasePower = (item: ISolarManFrameStationDataItem): number => {
-        if((item.purchasePower ?? 0) !== 0) return item.purchasePower!;
+        if ((item.purchasePower ?? 0) !== 0) return item.purchasePower!;
         const usage = Math.abs(item.usePower ?? 0);
         const generation = Math.abs(item.generationPower ?? 0);
         const discharge = Math.abs(item.dischargePower ?? 0);
-        const theoreticalPurchase =  usage - generation - discharge; 
-        if(theoreticalPurchase < 0) return 0;
+        const theoreticalPurchase = usage - generation - discharge;
+        if (theoreticalPurchase < 0) return 0;
         return theoreticalPurchase * -1;
     }
 

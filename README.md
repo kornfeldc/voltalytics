@@ -1,6 +1,9 @@
 # Voltalytics
 
-Voltalytics is an open-source project designed to display real-time electricity prices from the electricity provider [aWATTar](https://www.awattar.com). With a user-friendly dashboard, users can quickly view an overview of electricity prices for the next hours, and access a more detailed list of prices with a simple click. In the future, the dashboard will be extended to display API data from a [Sofar Solar Inverter](https://www.sofarsolar.com).
+Voltalytics is an open-source project designed to display real-time electricity prices from the electricity
+provider [aWATTar](https://www.awattar.com). With a user-friendly dashboard, users can quickly view an overview of
+electricity prices for the next hours, and access a more detailed list of prices with a simple click. In the future, the
+dashboard will be extended to display API data from a [Sofar Solar Inverter](https://www.sofarsolar.com).
 
 > prices are displayed in **_euro cent / kWh_** including 20% vat
 
@@ -10,7 +13,7 @@ Voltalytics is an open-source project designed to display real-time electricity 
 - Detailed list of prices accessible with a single click.
 - Profile page with google login
 - Possibility to store SolarMan API credentials
-- Display of SolarMan realtime data in dashboard 
+- Display of SolarMan realtime data in dashboard
 
 ## Techstack
 

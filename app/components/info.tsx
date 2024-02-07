@@ -1,8 +1,8 @@
 import React from "react";
 
 export default function Info({
-                    children
-                }: {
+                                 children
+                             }: {
     children: React.ReactNode
 }) {
     return (

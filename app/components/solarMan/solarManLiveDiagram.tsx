@@ -31,9 +31,9 @@ export default function SolarManLiveDiagram({realTimeData, currentPrice}: SolarM
         const kw = prepareValue(watt);
         return `${kw.toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})}`;
     }
-    
-    const formatCurr = (nr: number|null|undefined): string => {
-        if(!nr) return "";
+
+    const formatCurr = (nr: number | null | undefined): string => {
+        if (!nr) return "";
         return `${nr.toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})}`;
     }
 
@@ -66,7 +66,8 @@ export default function SolarManLiveDiagram({realTimeData, currentPrice}: SolarM
                         {format(value)}&nbsp;
                         <span className="text-xs">kW</span>
                         {doesAffectCosts && currentPrice
-                            ? <span className={"text-s " + (right ? "ml-2" : "mr-2")}>{formatCurr(currentPrice)}&nbsp;c</span> 
+                            ? <span
+                                className={"text-s " + (right ? "ml-2" : "mr-2")}>{formatCurr(currentPrice)}&nbsp;c</span>
                             : <template></template>}
                     </span>
                     {additionalRenderFunction && additionalRenderFunction}

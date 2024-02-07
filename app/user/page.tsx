@@ -8,7 +8,7 @@ import {Db, IUser} from "@/app/classes/db";
 export default function UserPage() {
     const {data: session} = useSession();
     const [user, setUser] = useState<IUser>();
-    
+
     useEffect(() => {
         const fetchUser = async () => {
             if (!session) return;
@@ -16,12 +16,14 @@ export default function UserPage() {
             if (fetchedUser) setUser(fetchedUser);
         };
 
-        fetchUser().then(() => {});
+        fetchUser().then(() => {
+        });
     }, [session]);
-    
+
     const save = () => {
-        if(!user || !session) return;
-        Db.saveUser(session, user).then(() => {});
+        if (!user || !session) return;
+        Db.saveUser(session, user).then(() => {
+        });
     }
 
     const getInfoText = () => session
@@ -32,55 +34,55 @@ export default function UserPage() {
     const renderButton = () => session
         ? (<Button onClick={() => signOut()}>Sign Out</Button>)
         : (<Button onClick={() => signIn()}>Sign In</Button>);
-    
+
     const renderForm = () => session && user
         ? (
             <div className="mt-4">
                 <div>
                     <input type="checkbox" checked={user.solarManIsOn}
-                        onChange={e => setUser({...user, solarManIsOn: e.target.checked })}/> Use SolarMan
+                           onChange={e => setUser({...user, solarManIsOn: e.target.checked})}/> Use SolarMan
                 </div>
                 {user.solarManIsOn &&
-                <div>
-                    <div className="mt-2">
-                        <input 
-                            className="custom-input w-full" 
-                            type="text" 
-                            value={user.solarManAppId}
-                            placeholder="App Id"
-                            onChange={e => setUser({...user, solarManAppId: e.target.value })}/>
+                    <div>
+                        <div className="mt-2">
+                            <input
+                                className="custom-input w-full"
+                                type="text"
+                                value={user.solarManAppId}
+                                placeholder="App Id"
+                                onChange={e => setUser({...user, solarManAppId: e.target.value})}/>
+                        </div>
+                        <div className="mt-2">
+                            <input
+                                className="custom-input w-full"
+                                type="text"
+                                value={user.solarManAppSecret}
+                                placeholder="App Secret"
+                                onChange={e => setUser({...user, solarManAppSecret: e.target.value})}/>
+                        </div>
+                        <div className="mt-2">
+                            <input
+                                className="custom-input w-full"
+                                type="text"
+                                value={user.solarManAppEmail}
+                                placeholder="App Email"
+                                onChange={e => setUser({...user, solarManAppEmail: e.target.value})}/>
+                        </div>
+                        <div className="mt-2">
+                            <input
+                                className="custom-input w-full"
+                                type="password"
+                                value={user.solarManAppPw}
+                                placeholder="App Password (SHA256)"
+                                onChange={e => setUser({...user, solarManAppPw: e.target.value})}/>
+                        </div>
+                        <div className="mt-2">
+                            <Button onClick={() => save()}>Save</Button>
+                        </div>
                     </div>
-                    <div className="mt-2">
-                        <input
-                            className="custom-input w-full"
-                            type="text"
-                            value={user.solarManAppSecret}
-                            placeholder="App Secret"
-                            onChange={e => setUser({...user, solarManAppSecret: e.target.value })}/>
-                    </div>
-                    <div className="mt-2">
-                        <input
-                            className="custom-input w-full"
-                            type="text"
-                            value={user.solarManAppEmail}
-                            placeholder="App Email"
-                            onChange={e => setUser({...user, solarManAppEmail: e.target.value })}/>
-                    </div>
-                    <div className="mt-2">
-                        <input
-                            className="custom-input w-full"
-                            type="password"
-                            value={user.solarManAppPw}
-                            placeholder="App Password (SHA256)"
-                            onChange={e => setUser({...user, solarManAppPw: e.target.value })}/>
-                    </div>
-                    <div className="mt-2">
-                        <Button onClick={() => save()}>Save</Button>
-                    </div>
-                </div>
                 }
             </div>
-        ) 
+        )
         : null;
 
     return (

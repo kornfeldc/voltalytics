@@ -1,5 +1,5 @@
 "use client";
-import React, {useEffect, useRef, useState, useCallback} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 
 export default function PullToRefresh() {
     const pullThreshold = 50; // Threshold in pixels for triggering refresh

@@ -213,7 +213,7 @@ export class SolarManApi {
             }
         );
     }
-    
+
     static async getFrameData(
         user: IUser,
         day: string = moment().format("YYYY-MM-DD")

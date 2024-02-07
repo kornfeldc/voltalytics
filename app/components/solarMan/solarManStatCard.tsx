@@ -34,7 +34,7 @@ export default function SolarManStatCard({
                 setStatData({} as ISolarManStationDataItem);
             setLoading(false);
         })
-    }, [user,range,day]);
+    }, [user, range, day]);
 
     const format = (kw: number | null | undefined) => {
         const digits = showComma ? 2 : 0;
@@ -79,11 +79,11 @@ export default function SolarManStatCard({
     const renderGrid = (right = false) => {
         return renderStatValue("text-negative", statData?.buyValue, "From Grid", right);
     }
-    
+
     const renderCharge = (right = false) => {
         return renderStatValue("text-positive", statData?.chargeValue, "To Battery", right);
     }
-    
+
     const renderFeedIn = (right = false) => {
         return renderStatValue("text-positive", statData?.gridValue, "To Grid", right);
     }

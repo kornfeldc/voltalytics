@@ -28,7 +28,7 @@ export default function HeaderBar() {
                     (
                         <Image
                             width={20}
-                            height={20} 
+                            height={20}
                             quality={100}
                             className={"w-8 h-8 rounded-full mr-3 my-2 bg-amber-400 border-2 border-amber-400"}
                             src={session.user.image}

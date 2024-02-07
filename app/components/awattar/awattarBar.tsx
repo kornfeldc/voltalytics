@@ -2,7 +2,11 @@ import {AwattarEntry} from "@/app/interfaces";
 import {Util} from "@/app/classes/util";
 import moment from "moment";
 
-export default function AwattarBar({entry, entries, showWithoutTax}: { entry: AwattarEntry, entries: Array<AwattarEntry>, showWithoutTax: boolean }) {
+export default function AwattarBar({entry, entries, showWithoutTax}: {
+    entry: AwattarEntry,
+    entries: Array<AwattarEntry>,
+    showWithoutTax: boolean
+}) {
 
     const prices = entries.map(e => e.grossPrice);
     const maxValue = Math.max(...prices);
@@ -20,12 +24,12 @@ export default function AwattarBar({entry, entries, showWithoutTax}: { entry: Aw
         ret += " dark:border-indigo-950 dark:text-gray-200";
         if (Util.isNow(entry.time))
             ret += " font-medium text-xl";
-      
+
         // add a spacer when a new day begins
         const index = entries.findIndex(x => JSON.stringify(x) === JSON.stringify(entry));
-        if(index !== 0 && moment(entry.time).format("HH") === "00")
+        if (index !== 0 && moment(entry.time).format("HH") === "00")
             ret += " mt-6";
-        
+
         return ret;
     }
 
@@ -55,7 +59,8 @@ export default function AwattarBar({entry, entries, showWithoutTax}: { entry: Aw
                     {Util.getFormattedTime(entry.time, true)}
                 </div>
             </div>
-            <div className="text-right" style={{width: "3em"}}>{Util.numberFormat(showWithoutTax ? entry.netPrice : entry.grossPrice)}</div>
+            <div className="text-right"
+                 style={{width: "3em"}}>{Util.numberFormat(showWithoutTax ? entry.netPrice : entry.grossPrice)}</div>
         </div>
     );
 }

@@ -15,7 +15,7 @@ interface SolarManCardProps {
 export default function SolarManRealTimeCard({user}: SolarManCardProps) {
 
     const [realTimeData, setRealTimeData] = useState<ISolarManRealTimeInfo | undefined>();
-    const [currentPrice, setCurrentPrice] = useState<number|undefined>();
+    const [currentPrice, setCurrentPrice] = useState<number | undefined>();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -42,7 +42,8 @@ export default function SolarManRealTimeCard({user}: SolarManCardProps) {
                 <h2 className={"mb-2"}>{getLastUpdateTime(realTimeData.lastUpdateTime)}</h2>
                 <SolarManLiveDiagram realTimeData={realTimeData} currentPrice={currentPrice}></SolarManLiveDiagram>
                 <div className={"mt-4"}>
-                    <SolarManDayChartContainer day={moment().format("YYYY-MM-DD")} showLegend={false} showWholeDay={false}></SolarManDayChartContainer>
+                    <SolarManDayChartContainer day={moment().format("YYYY-MM-DD")} showLegend={false}
+                                               showWholeDay={false}></SolarManDayChartContainer>
                 </div>
             </div>
         );
