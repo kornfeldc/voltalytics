@@ -91,7 +91,6 @@ export default function SolarManDayChart({data, showLegend, showWholeDay}: Solar
         const generation = Math.abs(item.generationPower ?? 0);
         const discharge = Math.abs(item.dischargePower ?? 0);
         const theoreticalPurchase =  usage - generation - discharge; 
-        console.log("calc purchase "+moment(item.dateTime!*1000).format("HH:mm"), { item, theoreticalPurchase });
         if(theoreticalPurchase < 0) return 0;
         return theoreticalPurchase * -1;
     }
