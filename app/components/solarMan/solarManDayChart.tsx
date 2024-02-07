@@ -84,6 +84,17 @@ export default function SolarManDayChart({data, showLegend, showWholeDay}: Solar
 
     if (!showLegend)
         options.plugins.legend.display = false;
+    
+    const getRealPurchasePower = (item: ISolarManFrameStationDataItem): number => {
+        if((item.purchasePower ?? 0) !== 0) return item.purchasePower!;
+        const usage = Math.abs(item.usePower ?? 0);
+        const generation = Math.abs(item.generationPower ?? 0);
+        const discharge = Math.abs(item.dischargePower ?? 0);
+        const theoreticalPurchase =  usage - generation - discharge; 
+        console.log("calc purchase "+moment(item.dateTime!*1000).format("HH:mm"), { item, theoreticalPurchase });
+        if(theoreticalPurchase < 0) return 0;
+        return theoreticalPurchase * -1;
+    }
 
     const mapLineData = (): any => {
         return {
@@ -101,7 +112,7 @@ export default function SolarManDayChart({data, showLegend, showWholeDay}: Solar
                 {
                     fill: true,
                     label: 'Purchased',
-                    data: data.map(x => Math.abs(x.purchasePower ?? 0) / -1000),
+                    data: data.map(x => Math.abs(getRealPurchasePower(x)) / -1000),
                     borderColor: 'rgb(244, 63, 94)',
                     backgroundColor: 'rgba(244, 63, 94, 0.5)',
                     borderWidth: 1,
