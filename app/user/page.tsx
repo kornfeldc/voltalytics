@@ -77,6 +77,23 @@ export default function UserPage() {
                                 onChange={e => setUser({...user, solarManAppPw: e.target.value})}/>
                         </div>
                         <div className="mt-2">
+                            <input
+                                className="custom-input w-full"
+                                type="text"
+                                value={user.hash}
+                                placeholder="Hash for Endpoint"
+                                onChange={e => setUser({...user, hash: e.target.value})}/>
+                        </div>
+                        {user.hash &&
+                            <div className="mt-2">
+                                <input type="checkbox" checked={user.chargeWithExcessIsOn}
+                                       onChange={e => setUser({
+                                           ...user,
+                                           chargeWithExcessIsOn: e.target.checked
+                                       })}/> Activate Excess Charging
+                            </div>
+                        }
+                        <div className="mt-2">
                             <Button onClick={() => save()}>Save</Button>
                         </div>
                     </div>

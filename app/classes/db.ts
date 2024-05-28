@@ -4,11 +4,13 @@ import {Session} from "next-auth";
 export interface IUser {
     theme: string;
     email: string;
+    hash: string;
     solarManIsOn: boolean;
     solarManAppId: string;
     solarManAppSecret: string;
     solarManAppEmail: string;
     solarManAppPw: string;
+    chargeWithExcessIsOn: boolean;
 }
 
 export class Db {
@@ -42,15 +44,33 @@ export class Db {
         return this.mapFromDb(data);
     }
 
+    static async getUserByHash(hash: string): Promise<IUser | undefined> {
+        if (!hash) return;
+
+        const supabase = this.getClient();
+        const {data, error} = await supabase
+            .from("user")
+            .select("*")
+            .eq("hash", hash)
+            .single();
+
+        if (!data)
+            return undefined;
+
+        return this.mapFromDb(data);
+    }
+
     static mapFromDb(dbUser: any): IUser {
         return {
             email: dbUser.email,
+            hash: dbUser.hash,
             theme: dbUser.theme,
             solarManAppId: dbUser.solarManAppId,
             solarManAppSecret: dbUser.solarManAppSecret,
             solarManAppEmail: dbUser.solarManAppEmail,
             solarManAppPw: dbUser.solarManAppPw,
-            solarManIsOn: dbUser.solarManIsOn
+            solarManIsOn: dbUser.solarManIsOn,
+            chargeWithExcessIsOn: dbUser.chargeWithExcessIsOn
         } as IUser;
     }
 
@@ -60,11 +80,13 @@ export class Db {
             .from('user')
             .update({
                 theme: user.theme,
+                hash: user.hash,
                 solarManAppId: user.solarManAppId,
                 solarManAppSecret: user.solarManAppSecret,
                 solarManAppEmail: user.solarManAppEmail,
                 solarManAppPw: user.solarManAppPw,
-                solarManIsOn: user.solarManIsOn
+                solarManIsOn: user.solarManIsOn,
+                chargeWithExcessIsOn: user.chargeWithExcessIsOn
             })
             .eq("email", session.user!.email);
     }
