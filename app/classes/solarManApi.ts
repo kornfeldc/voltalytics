@@ -122,7 +122,7 @@ export class SolarManApi {
 
     }
 
-    static async getRealtimeInfo(user: IUser): Promise<ISolarManRealTimeInfo | undefined> {
+    static async getRealtimeInfo(user: IUser, force = false): Promise<ISolarManRealTimeInfo | undefined> {
         return await VoltCache.get(
             `solarMan_realTimeData_${this.keyVersion}`,
             user.email,
@@ -150,7 +150,8 @@ export class SolarManApi {
                 if (!result?.requestId) return;
 
                 return result as ISolarManRealTimeInfo;
-            }
+            }, 
+            force
         );
     }
 

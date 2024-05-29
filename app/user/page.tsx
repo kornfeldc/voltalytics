@@ -26,6 +26,11 @@ export default function UserPage() {
         });
     }
 
+    const openEndpoint = () => {
+        if (!user || !session) return;
+        window.open(`/api/suggest/${user.hash}`);
+    }
+
     const getInfoText = () => session
         ? `Signed in as ${session?.user?.email}`
         : `If you want to use additional features, like "SolarMan" integration, 
@@ -93,8 +98,17 @@ export default function UserPage() {
                                        })}/> Activate Excess Charging
                             </div>
                         }
-                        <div className="mt-2">
-                            <Button onClick={() => save()}>Save</Button>
+                        <div className="mt-2 flex">
+                            <div className={"mr-2"}>
+                                <Button onClick={() => save()}>Save</Button>
+                            </div>
+                            {user.hash &&
+                                <button
+                                    className="text-indigo-700 hover:text-indigo-800 font-bold py-2 px-4 rounded-md"
+                                    onClick={() => openEndpoint()}>
+                                    Open Endpoint
+                                </button>
+                            }
                         </div>
                     </div>
                 }
