@@ -23,12 +23,12 @@ export class GoEApi {
     async setChargingSpeed(currentKw: number, targetKw: number) {
         if (targetKw === 0 && currentKw > 0) 
             return await this.setRawChargingSpeed(0, 0);
-        
+
         const diffLimit = 0.3;
         const diff = Math.abs(currentKw - targetKw);
         if (diff < diffLimit) 
             return;
-        
+
         const phaseAndCurrent = this.getPhaseAndCurrent(targetKw);
         return await this.setRawChargingSpeed(phaseAndCurrent.current, phaseAndCurrent.phase);
     }
@@ -84,14 +84,14 @@ export class GoEApi {
     private async setRawChargingSpeed(current: number, phase: number): Promise<any> {
         try {
             phase = phase == 3 ? 2 : phase;
-            const endpoint = this.getEndoint() + "/api/set?amp=" + current + "&psm=" + phase;
+            const charge = current > 0 && phase > 0;
+            let endpoint = !charge 
+                    ? `${this.getEndoint()}/api/set?amp=0&frc=0`
+                    : `${this.getEndoint()}/api/set?&amp=${current}&psm=${phase}&frc=2`;
+            
             const response = await fetch(endpoint, {
                 ...this.getHeader(),
-                method: 'GET',
-                // body: JSON.stringify({
-                //     amp: current,
-                //     psm: phase
-                // })
+                method: 'GET'
             });
 
             if (response.ok)

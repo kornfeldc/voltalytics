@@ -28,19 +28,31 @@ export default function GoERealTimeCard({user}: GoECardProps) {
         });
     }, [user]);
     
-    const setChargingSpeed = () => {
-        window.open("/api/goe/status/"+user.hash);
+    const setChargingSpeed = async () => {
+        const response = await fetch("/api/goe/status/"+user.hash);
+        if(!response.ok) {
+            alert("Failed");
+            return;
+        }
+        if(response.ok) {
+           const data = await response.json();
+           alert(JSON.stringify(data));
+        }
     } 
 
     const renderGoEStatus = () => {
         if (!goEStatus) return null;
+        const car = goEStatus.goe?.car ?? 0;
+        if(!car)
+            return <div className={"text-sm text-slate-400"}>No car</div>;
+        
         const currentKw = goEStatus.goe?.currentKw ?? 0;
-        if(currentKw === 0)
-            return (<div className={"text-sm text-slate-400"}>not charging</div>);
-
+        
         return (
             <div>
-                Charging with <span className={"text-lg text-pink-400"}>{goEStatus.goe.currentKw} kw</span>
+                {currentKw === 0 && <div className={"text-sm text-slate-400"}>not charging</div>}
+                {currentKw > 0 && <span>Charging with <span className={"text-lg text-pink-400"}>{goEStatus.goe.currentKw} kw</span></span>}
+                
                 {goEStatus.excessSuggestion.suggestion.mode === "charge" &&  
                     <div>Suggestion: {goEStatus.excessSuggestion.suggestion.mode} with {goEStatus.excessSuggestion.suggestion.kw} kw</div>
                 }
