@@ -64,6 +64,6 @@ export async function GET(request: Request, {params}: { params: Params }) {
             chargeResponse
         });
     } catch (e) {
-        return NextResponse.json({message: "Error on getting RealTimeInfo", e});
+        return NextResponse.json({message: "Error on getting RealTimeInfo", e, fetchedUser});
     }
 }
