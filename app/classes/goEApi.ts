@@ -68,7 +68,7 @@ export class GoEApi {
     }
 
     private getEndoint() {
-        var url = process.env.NEXT_PUBLIC_GOEURL!;
+        var url = process.env.NEXT_PUBLIC_GOE_URL!;
         return url.replace("snr", this.serialNr);
     }
 

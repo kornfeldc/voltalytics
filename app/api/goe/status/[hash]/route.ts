@@ -27,15 +27,18 @@ export async function GET(request: Request, {params}: { params: Params }) {
         return NextResponse.json({message: "Error on getting user"});
     }
 
+    let currentLine = "";
     try {
         const goe = new GoEApi(fetchedUser.goESerial, fetchedUser.goEApiToken);
         const goeStatus = await goe.getStatus();
+        currentLine = "got goeStatus";
 
         let currentKw = 0;
         try {
             currentKw = (goeStatus?.nrg[11] ?? 0) / 1000;
         } catch {
         }
+        currentLine = "got currentKw";
 
         SolarManApi.solarManUrl = "https://globalapi.solarmanpv.com";
         const excessSuggestion = await SolarManApi.getExcessChargeSuggestion(fetchedUser, currentKw);
@@ -43,6 +46,7 @@ export async function GET(request: Request, {params}: { params: Params }) {
 
         const phaseAndCurrent = goe.getPhaseAndCurrent(currentKw);
 
+        currentLine = "set speed";
         let chargeResponse;
         if (mode !== "readonly") {
             if (excessSuggestion.suggestion.mode === "charge")
@@ -64,6 +68,6 @@ export async function GET(request: Request, {params}: { params: Params }) {
             chargeResponse
         });
     } catch (e) {
-        return NextResponse.json({message: "Error on getting RealTimeInfo", e, fetchedUser});
+        return NextResponse.json({message: "Error on getting RealTimeInfo", e, currentLine});
     }
 }
