@@ -11,6 +11,9 @@ export interface IUser {
     solarManAppEmail: string;
     solarManAppPw: string;
     chargeWithExcessIsOn: boolean;
+    goEIsOn: boolean;
+    goESerial: string;
+    goEApiToken: string;
 }
 
 export class Db {
@@ -70,7 +73,10 @@ export class Db {
             solarManAppEmail: dbUser.solarManAppEmail,
             solarManAppPw: dbUser.solarManAppPw,
             solarManIsOn: dbUser.solarManIsOn,
-            chargeWithExcessIsOn: dbUser.chargeWithExcessIsOn
+            chargeWithExcessIsOn: dbUser.chargeWithExcessIsOn,
+            goEIsOn: dbUser.goEIsOn,
+            goESerial: dbUser.goESerial,
+            goEApiToken: dbUser.goEApiToken
         } as IUser;
     }
 
@@ -86,7 +92,10 @@ export class Db {
                 solarManAppEmail: user.solarManAppEmail,
                 solarManAppPw: user.solarManAppPw,
                 solarManIsOn: user.solarManIsOn,
-                chargeWithExcessIsOn: user.chargeWithExcessIsOn
+                chargeWithExcessIsOn: user.chargeWithExcessIsOn,
+                goEIsOn: user.goEIsOn,
+                goESerial: user.goESerial,
+                goEApiToken: user.goEApiToken
             })
             .eq("email", session.user!.email);
     }

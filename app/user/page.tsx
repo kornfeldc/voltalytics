@@ -31,6 +31,11 @@ export default function UserPage() {
         window.open(`/api/suggest/${user.hash}`);
     }
 
+    const setChargingSpeed = () => {
+        if (!user || !session) return;
+        window.open(`/api/goe/status/${user.hash}`);
+    }
+
     const getInfoText = () => session
         ? `Signed in as ${session?.user?.email}`
         : `If you want to use additional features, like "SolarMan" integration, 
@@ -91,6 +96,35 @@ export default function UserPage() {
                         </div>
                         {user.hash &&
                             <div className="mt-2">
+                                <input type="checkbox" checked={user.goEIsOn}
+                                       onChange={e => setUser({
+                                           ...user,
+                                           goEIsOn: e.target.checked
+                                       })}/> Enable Go-E integration 
+                            </div>
+                        }
+                        {user.hash && user.goEIsOn &&
+                        <div className="mt-2">
+                            <input
+                                className="custom-input w-full"
+                                type="text"
+                                value={user.goESerial}
+                                placeholder="Go-E Serial Nr"
+                                onChange={e => setUser({...user, goESerial: e.target.value})}/>
+                        </div>
+                        }
+                        {user.hash && user.goEIsOn &&
+                            <div className="mt-2">
+                                <input
+                                    className="custom-input w-full"
+                                    type="text"
+                                    value={user.goEApiToken}
+                                    placeholder="Go-E Api Token"
+                                    onChange={e => setUser({...user, goEApiToken: e.target.value})}/>
+                            </div>
+                        }
+                        {user.hash && user.goEIsOn &&
+                            <div className="mt-2">
                                 <input type="checkbox" checked={user.chargeWithExcessIsOn}
                                        onChange={e => setUser({
                                            ...user,
@@ -102,6 +136,15 @@ export default function UserPage() {
                             <div className={"mr-2"}>
                                 <Button onClick={() => save()}>Save</Button>
                             </div>
+
+                            {user.hash && user.goEIsOn &&
+                                <button
+                                    className="text-indigo-700 hover:text-indigo-800 font-bold py-2 px-4 rounded-md"
+                                    onClick={() => setChargingSpeed()}>
+                                    Set Charging Speed
+                                </button>
+                            }
+                            
                             {user.hash &&
                                 <button
                                     className="text-indigo-700 hover:text-indigo-800 font-bold py-2 px-4 rounded-md"

@@ -17,6 +17,27 @@ export interface ISolarManRealTimeInfo {
     generationTotal: number | null;
 }
 
+export interface ISolarManPower {
+    production: number;
+    usage: number;
+    purchase: number;
+    grid: number;
+    excess: number;
+}
+
+export interface ISolarManSuggestion {
+    mode: "dont_charge" | "no_change" | "charge";
+    kw: number;
+}
+
+export interface ISolarManExcessSuggestion {
+    useChargeWithExcessIsOn: boolean;
+    lastUpdate: string;
+    minutesOld: number;
+    power: ISolarManPower;
+    suggestion: ISolarManSuggestion;
+}
+
 export interface ISolarManStatInfo {
     success: boolean | null;
     stationDataItems: Array<ISolarManStationDataItem>;
@@ -48,6 +69,12 @@ export interface ISolarManFrameStationDataItem {
     batterySoc: number | null;
     dateTime: number | null;
 }
+
+const Settings = {
+    minChargingPower: 1.5,
+    maxChargingPower: 8,
+    minMinutesOldForAction: 10
+};
 
 export class SolarManApi {
     static solarManUrl = "/api/proxy";
@@ -150,10 +177,51 @@ export class SolarManApi {
                 if (!result?.requestId) return;
 
                 return result as ISolarManRealTimeInfo;
-            }, 
+            },
             force
         );
     }
+
+    static async getExcessChargeSuggestion(user: IUser, currentChargingKw = 0): Promise<ISolarManExcessSuggestion | undefined> {
+        const realTimeInfo = await SolarManApi.getRealtimeInfo(user);
+        if (!realTimeInfo) throw ("No RealTimeInfo");
+        if (!realTimeInfo.lastUpdateTime) throw ("No RealTimeInfo UpdateTime");
+
+        const lastUpdateMoment = moment(realTimeInfo.lastUpdateTime * 1000);
+        const minutesOld = moment().diff(lastUpdateMoment, "minutes");
+
+        const power = {
+            production: (realTimeInfo.generationPower ?? 0) / 1000,
+            usage: (realTimeInfo.usePower ?? 0) / 1000,
+            purchase: (realTimeInfo.purchasePower ?? 0) / 1000,
+            grid: (realTimeInfo.gridPower ?? 0) / 1000,
+            currentChargingKw,
+            excess: (((realTimeInfo.generationPower ?? 0) - (realTimeInfo.usePower ?? 0)) / 1000) + currentChargingKw
+        } as ISolarManPower
+
+        let suggestion = {
+            mode: "dont_charge",
+            kw: 0
+        } as ISolarManSuggestion;
+
+        if (minutesOld > Settings.minMinutesOldForAction)
+            suggestion.mode = "no_change";
+        else if (user.chargeWithExcessIsOn && power.excess > Settings.minChargingPower) {
+            suggestion.mode = "charge";
+            suggestion.kw = power.excess;
+            if (suggestion.kw >= Settings.maxChargingPower)
+                suggestion.kw = Settings.maxChargingPower;
+        }
+
+        return {
+            useChargeWithExcessIsOn: user.chargeWithExcessIsOn,
+            lastUpdate: lastUpdateMoment.format("YYYY-MM-DD HH:mm:ss"),
+            minutesOld,
+            power,
+            suggestion
+        } as ISolarManExcessSuggestion;
+    }
+
 
     static async getStatistics(
         user: IUser,
