@@ -45,7 +45,7 @@ export default function GoERealTimeCard({user}: GoECardProps) {
                     <div>Suggestion: {goEStatus.excessSuggestion.suggestion.mode} with {goEStatus.excessSuggestion.suggestion.kw} kw</div>
                 }
                 {goEStatus.excessSuggestion.suggestion.mode === "dont_charge" &&
-                    <div>Suggestion: Don't Charge</div>
+                    <div>Suggestion: Do not Charge</div>
                 }
             </div>
         );
