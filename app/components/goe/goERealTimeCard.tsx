@@ -7,7 +7,6 @@ import {ArrowPathIcon, StopIcon} from "@heroicons/react/24/solid";
 import {PlayIcon} from "@heroicons/react/20/solid";
 import {useSession} from "next-auth/react";
 import {useRouter} from "next/navigation";
-import {is} from "@babel/types";
 
 interface GoECardProps {
     user: IUser;
@@ -35,25 +34,25 @@ export default function GoERealTimeCard({user}: GoECardProps) {
 
     const setChargingSpeed = async (forceStop = false) => {
         setLoading(true);
-        let url =  "/api/goe/status/" + user.hash;
-        if(forceStop)
-            url+="?forceStop=1"
-        
+        let url = "/api/goe/status/" + user.hash;
+        if (forceStop)
+            url += "?forceStop=1"
+
         const response = await fetch(url);
         if (!response.ok) {
             setLoading(false);
             alert("Failed");
             return;
         }
-        
+
         if (response.ok) {
             const data = await response.json();
             alert(JSON.stringify(data));
         }
-        
-        setTimeout(()=> {
+
+        setTimeout(() => {
             window.location.reload();
-        },1000);
+        }, 1000);
     }
 
     const enableExcessCharging = async (isOn: boolean) => {
@@ -106,17 +105,20 @@ export default function GoERealTimeCard({user}: GoECardProps) {
                     <h1>go-e live data</h1>
                     {renderLoadingOrData()}
                 </div>
-                <div>
-                    <ArrowPathIcon width={30} height={30} className={"text-pink-400 mb-4"} onClick={()=> setChargingSpeed()}/>
-                    {!loading && user.chargeWithExcessIsOn &&
-                        <StopIcon width={30} height={30} className={"text-red-400"}
-                                  onClick={() => enableExcessCharging(false)}/>
-                    }
-                    {!loading && !user.chargeWithExcessIsOn &&
-                        <PlayIcon width={30} height={30} className={"text-green-400"}
-                                  onClick={() => enableExcessCharging(true)}/>
-                    }
-                </div>
+                {!loading &&
+                    <div>
+                        <ArrowPathIcon width={30} height={30} className={"text-pink-400 mb-4"}
+                                       onClick={() => setChargingSpeed()}/>
+                        {user.chargeWithExcessIsOn &&
+                            <StopIcon width={30} height={30} className={"text-red-400"}
+                                      onClick={() => enableExcessCharging(false)}/>
+                        }
+                        {!user.chargeWithExcessIsOn &&
+                            <PlayIcon width={30} height={30} className={"text-green-400"}
+                                      onClick={() => enableExcessCharging(true)}/>
+                        }
+                    </div>
+                }
             </div>
         </div>);
 
