@@ -15,7 +15,7 @@ export class GoEApi {
     }
 
     async getStatus(): Promise<any> {
-        const endpoint = this.getEndoint() + "/api/status";
+        const endpoint = this.getEndpoint() + "/api/status";
         const response = await fetch(endpoint, {...this.getHeader()});
         return await response.json();
     }
@@ -35,7 +35,7 @@ export class GoEApi {
 
     getPhaseAndCurrent(kw: number): IPhaseAndCurrent {
         let phase = 1;
-        let current = 6; // Minimum current setting
+        let current: number; // Minimum current setting
 
         // Assuming a voltage of 230V for single-phase and 400V for three-phase
         const singlePhaseVoltage = 230;
@@ -67,8 +67,8 @@ export class GoEApi {
         return {phase, current};
     }
 
-    private getEndoint() {
-        var url = process.env.NEXT_PUBLIC_GOE_URL!;
+    private getEndpoint() {
+        const url = process.env.NEXT_PUBLIC_GOE_URL!;
         return url.replace("snr", this.serialNr);
     }
 
@@ -86,8 +86,8 @@ export class GoEApi {
             phase = phase == 3 ? 2 : phase;
             const charge = current > 0 && phase > 0;
             let endpoint = !charge 
-                    ? `${this.getEndoint()}/api/set?amp=0&frc=0`
-                    : `${this.getEndoint()}/api/set?&amp=${current}&psm=${phase}&frc=2`;
+                    ? `${this.getEndpoint()}/api/set?amp=0&frc=0`
+                    : `${this.getEndpoint()}/api/set?&amp=${current}&psm=${phase}&frc=2`;
             
             const response = await fetch(endpoint, {
                 ...this.getHeader(),

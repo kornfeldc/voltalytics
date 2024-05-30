@@ -1,6 +1,7 @@
 import {IUser} from "@/app/classes/db";
 import {VoltCache} from "@/app/classes/cache";
 import moment from "moment";
+import {AwattarApi} from "@/app/classes/awattarApi";
 
 export interface ISolarManRealTimeInfo {
     success: boolean | null;
@@ -23,6 +24,8 @@ export interface ISolarManPower {
     purchase: number;
     grid: number;
     excess: number;
+    batterySoc: number;
+    currentPrice: number|undefined;
 }
 
 export interface ISolarManSuggestion {
@@ -73,7 +76,9 @@ export interface ISolarManFrameStationDataItem {
 const Settings = {
     minChargingPower: 1.5,
     maxChargingPower: 8,
-    minMinutesOldForAction: 10
+    minMinutesOldForAction: 10,
+    minBatterySoc: 25,
+    kwWhenBattery: 4.5
 };
 
 export class SolarManApi {
@@ -162,9 +167,9 @@ export class SolarManApi {
                 if (!stationId) return;
 
                 let url = `${this.solarManUrl}/station/v1.0/realTime?language=en`;
-                if(force) 
+                if (force)
                     url += (new Date()).getTime();
-                
+
                 const response = await fetch(url, {
                     method: "POST",
                     headers: {
@@ -186,18 +191,26 @@ export class SolarManApi {
     }
 
     static async getExcessChargeSuggestion(user: IUser, currentChargingKw = 0): Promise<ISolarManExcessSuggestion | undefined> {
-        const realTimeInfo = await SolarManApi.getRealtimeInfo(user,true);
+        const realTimeInfo = await SolarManApi.getRealtimeInfo(user, true);
         if (!realTimeInfo) throw ("No RealTimeInfo");
         if (!realTimeInfo.lastUpdateTime) throw ("No RealTimeInfo UpdateTime");
 
         const lastUpdateMoment = moment(realTimeInfo.lastUpdateTime * 1000);
         const minutesOld = moment().diff(lastUpdateMoment, "minutes");
+        
+        let currentPrice = undefined;
+        try {
+            currentPrice = await AwattarApi.getCurrentPrice();
+        }
+        catch(e) {}
 
         const power = {
             production: (realTimeInfo.generationPower ?? 0) / 1000,
             usage: (realTimeInfo.usePower ?? 0) / 1000,
             purchase: (realTimeInfo.purchasePower ?? 0) / 1000,
             grid: (realTimeInfo.gridPower ?? 0) / 1000,
+            batterySoc: realTimeInfo.batterySoc ?? 0,
+            currentPrice,
             currentChargingKw,
             excess: (((realTimeInfo.generationPower ?? 0) - (realTimeInfo.usePower ?? 0)) / 1000) + currentChargingKw
         } as ISolarManPower
@@ -211,9 +224,21 @@ export class SolarManApi {
             suggestion.mode = "no_change";
         else if (user.chargeWithExcessIsOn && power.excess > Settings.minChargingPower) {
             suggestion.mode = "charge";
-            suggestion.kw = Math.round(power.excess*10)/10;
+            suggestion.kw = Math.round(power.excess * 10) / 10;
             if (suggestion.kw >= Settings.maxChargingPower)
                 suggestion.kw = Settings.maxChargingPower;
+        }
+
+        if (suggestion.mode !== "no_change" &&
+            suggestion.kw < Settings.kwWhenBattery &&
+            power.batterySoc >= Settings.minBatterySoc) {
+            suggestion.mode = "charge";
+            suggestion.kw = Settings.kwWhenBattery;
+        }
+        
+        if(suggestion.mode === "dont_charge" && currentPrice !== undefined && currentPrice <= 0) {
+            suggestion.mode = "charge";
+            suggestion.kw = Settings.kwWhenBattery;
         }
 
         return {
