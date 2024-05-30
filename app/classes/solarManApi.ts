@@ -161,7 +161,10 @@ export class SolarManApi {
                 const stationId = await this.getStationId(user, token);
                 if (!stationId) return;
 
-                const url = `${this.solarManUrl}/station/v1.0/realTime?language=en`;
+                let url = `${this.solarManUrl}/station/v1.0/realTime?language=en`;
+                if(force) 
+                    url += (new Date()).getTime();
+                
                 const response = await fetch(url, {
                     method: "POST",
                     headers: {
@@ -183,7 +186,7 @@ export class SolarManApi {
     }
 
     static async getExcessChargeSuggestion(user: IUser, currentChargingKw = 0): Promise<ISolarManExcessSuggestion | undefined> {
-        const realTimeInfo = await SolarManApi.getRealtimeInfo(user);
+        const realTimeInfo = await SolarManApi.getRealtimeInfo(user,true);
         if (!realTimeInfo) throw ("No RealTimeInfo");
         if (!realTimeInfo.lastUpdateTime) throw ("No RealTimeInfo UpdateTime");
 
@@ -208,7 +211,7 @@ export class SolarManApi {
             suggestion.mode = "no_change";
         else if (user.chargeWithExcessIsOn && power.excess > Settings.minChargingPower) {
             suggestion.mode = "charge";
-            suggestion.kw = power.excess;
+            suggestion.kw = Math.round(power.excess*10)/10;
             if (suggestion.kw >= Settings.maxChargingPower)
                 suggestion.kw = Settings.maxChargingPower;
         }

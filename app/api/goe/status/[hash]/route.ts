@@ -13,6 +13,9 @@ export async function GET(request: Request, {params}: { params: Params }) {
     const {hash} = params;
     if (!hash) return NextResponse.json({message: "No hash"});
 
+    const url = new URL(request.url);
+    const mode = url.searchParams.get('mode');
+
     let fetchedUser;
     try {
         fetchedUser = await Db.getUserByHash(hash);
@@ -41,10 +44,12 @@ export async function GET(request: Request, {params}: { params: Params }) {
         const phaseAndCurrent = goe.getPhaseAndCurrent(currentKw);
 
         let chargeResponse;
-        if (excessSuggestion.suggestion.mode === "charge")
-            chargeResponse = await goe.setChargingSpeed(currentKw, excessSuggestion.suggestion.kw);
-        else if (excessSuggestion.suggestion.mode === "dont_charge")
-            chargeResponse = await goe.setChargingSpeed(currentKw, 0);
+        if (mode !== "readonly") {
+            if (excessSuggestion.suggestion.mode === "charge")
+                chargeResponse = await goe.setChargingSpeed(currentKw, excessSuggestion.suggestion.kw);
+            else if (excessSuggestion.suggestion.mode === "dont_charge")
+                chargeResponse = await goe.setChargingSpeed(currentKw, 0);
+        }
 
         return NextResponse.json({
             excessSuggestion,

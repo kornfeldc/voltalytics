@@ -9,6 +9,7 @@ import SolarManRealTimeCard from "@/app/components/solarMan/solarManRealTimeCard
 import SolarManStatCard from "@/app/components/solarMan/solarManStatCard";
 import Link from "next/link";
 import moment from "moment";
+import GoERealTimeCard from "@/app/components/goe/goERealTimeCard";
 
 
 export default function DashboardPage() {
@@ -50,6 +51,12 @@ export default function DashboardPage() {
                     <div className="mb-4">
                         <SolarManRealTimeCard user={user!}/>
                     </div>
+                    {user?.goEIsOn &&
+
+                        <div className="mb-4">
+                            <GoERealTimeCard user={user!}/>
+                        </div>
+                    }
                     <div className="mb-4 flex flex-col min-[410px]:flex-row">
                         <div className="flex-auto min-[410px]:mr-1 max-[409px]:mb-4">
                             <Link href={`/solarman/days/${moment().format("YYYY-MM-DD")}`}>
