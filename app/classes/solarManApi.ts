@@ -204,16 +204,23 @@ export class SolarManApi {
             currentPrice = await AwattarApi.getCurrentPrice();
         }
         catch(e) {}
-
+        
+        let usageWithoutCharge = ((realTimeInfo.usePower ?? 0) / 1000) - currentChargingKw;
+        if(usageWithoutCharge < 0)
+            usageWithoutCharge = 0;
+        const generation = (realTimeInfo.generationPower ?? 0) / 1000;
+        const excess = generation - usageWithoutCharge;
+        
         const power = {
             production: (realTimeInfo.generationPower ?? 0) / 1000,
             usage: (realTimeInfo.usePower ?? 0) / 1000,
+            usageWithoutCharge,
             purchase: (realTimeInfo.purchasePower ?? 0) / 1000,
             grid: (realTimeInfo.gridPower ?? 0) / 1000,
             batterySoc: realTimeInfo.batterySoc ?? 0,
             currentPrice,
             currentChargingKw,
-            excess: (((realTimeInfo.generationPower ?? 0) - (realTimeInfo.usePower ?? 0)) / 1000) + currentChargingKw
+            excess
         } as ISolarManPower
 
         let suggestion = {
