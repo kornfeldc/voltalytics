@@ -17,7 +17,7 @@ export async function GET(request: Request, {params}: { params: Params }) {
     try {
         fetchedUser = await Db.getUserByHash(hash);
         if (!fetchedUser) return NextResponse.json({message: "No user"});
-        if (!fetchedUser.goEApiToken) return NextResponse.json({message: "No go e api token", fetchedUser});
+        if (!fetchedUser.goEApiToken) return NextResponse.json({message: "No go e api token"});
         if (!fetchedUser.goESerial) return NextResponse.json({message: "No go e serial nr"});
         if (!fetchedUser.goEIsOn) return NextResponse.json({message: "No go e integration"});
     } catch (e) {

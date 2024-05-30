@@ -55,6 +55,7 @@ export class Db {
             .from("user")
             .select("*")
             .eq("hash", hash)
+            .neq("hash", Math.random())
             .single();
 
         if (!data)

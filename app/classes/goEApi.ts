@@ -21,24 +21,14 @@ export class GoEApi {
     }
 
     async setChargingSpeed(currentKw: number, targetKw: number) {
-        if (targetKw === 0 && currentKw > 0) {
+        if (targetKw === 0 && currentKw > 0) 
             return await this.setRawChargingSpeed(0, 0);
-        }
-
-        const maxKw = 8;
-        const diffLimit = 0.5;
-
-        if (targetKw >= maxKw)
-            targetKw = maxKw;
-
+        
+        const diffLimit = 0.3;
         const diff = Math.abs(currentKw - targetKw);
-        console.log({
-            currentKw, targetKw, diff
-        });
-
-        if (diff < diffLimit)
+        if (diff < diffLimit) 
             return;
-
+        
         const phaseAndCurrent = this.getPhaseAndCurrent(targetKw);
         return await this.setRawChargingSpeed(phaseAndCurrent.current, phaseAndCurrent.phase);
     }
