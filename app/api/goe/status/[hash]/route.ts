@@ -15,6 +15,7 @@ export async function GET(request: Request, {params}: { params: Params }) {
 
     const url = new URL(request.url);
     const mode = url.searchParams.get('mode');
+    const forceStop = url.searchParams.get('forceStop');
 
     let fetchedUser;
     try {
@@ -47,15 +48,19 @@ export async function GET(request: Request, {params}: { params: Params }) {
         const phaseAndCurrent = goe.getPhaseAndCurrent(currentKw);
 
         currentLine = "set speed";
-        let chargeResponse;
+        let chargeResponse = {} as any;
         if (mode !== "readonly") {
-            if (excessSuggestion.suggestion.mode === "charge")
+            if (forceStop === "1")
+                chargeResponse = await goe.setChargingSpeed(0, 0);
+            else if (excessSuggestion.suggestion.mode === "charge")
                 chargeResponse = await goe.setChargingSpeed(currentKw, excessSuggestion.suggestion.kw);
             else if (excessSuggestion.suggestion.mode === "dont_charge")
                 chargeResponse = await goe.setChargingSpeed(currentKw, 0);
         }
 
         return NextResponse.json({
+            mode,
+            forceStop, 
             excessSuggestion,
             goe: {
                 currentKw,
@@ -65,7 +70,9 @@ export async function GET(request: Request, {params}: { params: Params }) {
                 phase: goeStatus.psm,
                 phaseAndCurrent
             },
-            chargeResponse
+            response: {
+                chargeResponse
+            } 
         });
     } catch (e) {
         return NextResponse.json({message: "Error on getting RealTimeInfo", e, currentLine});

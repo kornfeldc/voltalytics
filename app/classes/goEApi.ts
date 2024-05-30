@@ -21,7 +21,7 @@ export class GoEApi {
     }
 
     async setChargingSpeed(currentKw: number, targetKw: number) {
-        if (targetKw === 0 && currentKw > 0) 
+        if (targetKw === 0 && currentKw === 0) 
             return await this.setRawChargingSpeed(0, 0);
 
         const diffLimit = 0.3;
@@ -94,8 +94,10 @@ export class GoEApi {
                 method: 'GET'
             });
 
-            if (response.ok)
-                return await response.json();
+            if (response.ok) {
+                const data = await response.json();
+                return { endpoint, data};
+            }
             return {
                 endpoint,
                 status: response.status,

@@ -191,6 +191,7 @@ export class SolarManApi {
     }
 
     static async getExcessChargeSuggestion(user: IUser, currentChargingKw = 0): Promise<ISolarManExcessSuggestion | undefined> {
+        
         const realTimeInfo = await SolarManApi.getRealtimeInfo(user, true);
         if (!realTimeInfo) throw ("No RealTimeInfo");
         if (!realTimeInfo.lastUpdateTime) throw ("No RealTimeInfo UpdateTime");
@@ -240,6 +241,9 @@ export class SolarManApi {
             suggestion.mode = "charge";
             suggestion.kw = Settings.kwWhenBattery;
         }
+        
+        if(!user.chargeWithExcessIsOn)
+            suggestion.mode = "no_change";
 
         return {
             useChargeWithExcessIsOn: user.chargeWithExcessIsOn,

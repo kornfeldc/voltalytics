@@ -1,18 +1,23 @@
 "use client";
 import Card from "@/app/components/card";
 import React, {useEffect, useState} from "react";
-import {IUser} from "@/app/classes/db";
+import {Db, IUser} from "@/app/classes/db";
 import LoadingSpinner from "@/app/components/loadingSpinner";
-import {ArrowPathIcon} from "@heroicons/react/24/solid";
+import {ArrowPathIcon, StopIcon} from "@heroicons/react/24/solid";
+import {PlayIcon} from "@heroicons/react/20/solid";
+import {useSession} from "next-auth/react";
+import {useRouter} from "next/navigation";
+import {is} from "@babel/types";
 
 interface GoECardProps {
     user: IUser;
 }
 
 export default function GoERealTimeCard({user}: GoECardProps) {
-
+    const {data: session} = useSession();
     const [goEStatus, setGoEStatus] = useState<any | undefined>();
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         setLoading(true);
@@ -27,37 +32,56 @@ export default function GoERealTimeCard({user}: GoECardProps) {
                 setLoading(false);
         });
     }, [user]);
-    
-    const setChargingSpeed = async () => {
-        const response = await fetch("/api/goe/status/"+user.hash);
-        if(!response.ok) {
+
+    const setChargingSpeed = async (forceStop = false) => {
+        setLoading(true);
+        let url =  "/api/goe/status/" + user.hash;
+        if(forceStop)
+            url+="?forceStop=1"
+        
+        const response = await fetch(url);
+        if (!response.ok) {
+            setLoading(false);
             alert("Failed");
             return;
         }
-        if(response.ok) {
-           const data = await response.json();
-           alert(JSON.stringify(data));
+        
+        if (response.ok) {
+            const data = await response.json();
+            alert(JSON.stringify(data));
         }
-    } 
+        
+        setTimeout(()=> {
+            window.location.reload();
+        },1000);
+    }
+
+    const enableExcessCharging = async (isOn: boolean) => {
+        if (!user || !session) return;
+        setLoading(true);
+        await Db.saveUser(session, {...user, chargeWithExcessIsOn: isOn});
+        await setChargingSpeed(!isOn);
+    }
 
     const renderGoEStatus = () => {
         if (!goEStatus) return null;
         const car = goEStatus.goe?.car ?? 0;
-        if(!car)
+        if (!car)
             return <div className={"text-sm text-slate-400"}>No car</div>;
-        
+
         const currentKw = goEStatus.goe?.currentKw ?? 0;
-        
+
         return (
             <div>
                 {currentKw === 0 && <div className={"text-sm text-slate-400"}>not charging</div>}
-                {currentKw > 0 && <span>Charging with <span className={"text-lg text-pink-400"}>{goEStatus.goe.currentKw} kw</span></span>}
-                
-                {goEStatus.excessSuggestion.suggestion.mode === "charge" &&  
-                    <div>Suggestion: {goEStatus.excessSuggestion.suggestion.mode} with {goEStatus.excessSuggestion.suggestion.kw} kw</div>
+                {currentKw > 0 && <span>charging with <span
+                    className={"text-lg text-pink-400"}>{goEStatus.goe.currentKw} kw</span></span>}
+
+                {goEStatus.excessSuggestion.suggestion.mode === "charge" &&
+                    <div>suggestion: {goEStatus.excessSuggestion.suggestion.mode} with {goEStatus.excessSuggestion.suggestion.kw} kw</div>
                 }
                 {goEStatus.excessSuggestion.suggestion.mode === "dont_charge" &&
-                    <div>Suggestion: Do not Charge</div>
+                    <div>suggestion: do not charge</div>
                 }
             </div>
         );
@@ -83,8 +107,16 @@ export default function GoERealTimeCard({user}: GoECardProps) {
                     {renderLoadingOrData()}
                 </div>
                 <div>
-                   <ArrowPathIcon width={30} height={30} className={"text-pink-400"} onClick={setChargingSpeed}/> 
-                </div> 
+                    <ArrowPathIcon width={30} height={30} className={"text-pink-400 mb-4"} onClick={()=> setChargingSpeed()}/>
+                    {!loading && user.chargeWithExcessIsOn &&
+                        <StopIcon width={30} height={30} className={"text-red-400"}
+                                  onClick={() => enableExcessCharging(false)}/>
+                    }
+                    {!loading && !user.chargeWithExcessIsOn &&
+                        <PlayIcon width={30} height={30} className={"text-green-400"}
+                                  onClick={() => enableExcessCharging(true)}/>
+                    }
+                </div>
             </div>
         </div>);
 

@@ -86,7 +86,8 @@ export default function UserPage() {
                                 placeholder="App Password (SHA256)"
                                 onChange={e => setUser({...user, solarManAppPw: e.target.value})}/>
                         </div>
-                        <div className="mt-2">
+                        <div className="mt-12">
+                            <div>External Access Hash</div>
                             <input
                                 className="custom-input w-full"
                                 type="text"
@@ -95,7 +96,7 @@ export default function UserPage() {
                                 onChange={e => setUser({...user, hash: e.target.value})}/>
                         </div>
                         {user.hash &&
-                            <div className="mt-2">
+                            <div className="mt-12">
                                 <input type="checkbox" checked={user.goEIsOn}
                                        onChange={e => setUser({
                                            ...user,
@@ -132,26 +133,10 @@ export default function UserPage() {
                                        })}/> Activate Excess Charging
                             </div>
                         }
-                        <div className="mt-2 flex">
+                        <div className="mt-12 flex">
                             <div className={"mr-2"}>
                                 <Button onClick={() => save()}>Save</Button>
                             </div>
-
-                            {user.hash && user.goEIsOn &&
-                                <button
-                                    className="text-indigo-700 hover:text-indigo-800 font-bold py-2 px-4 rounded-md"
-                                    onClick={() => setChargingSpeed()}>
-                                    Set Charging Speed
-                                </button>
-                            }
-                            
-                            {user.hash &&
-                                <button
-                                    className="text-indigo-700 hover:text-indigo-800 font-bold py-2 px-4 rounded-md"
-                                    onClick={() => openEndpoint()}>
-                                    Open Endpoint
-                                </button>
-                            }
                         </div>
                     </div>
                 }
