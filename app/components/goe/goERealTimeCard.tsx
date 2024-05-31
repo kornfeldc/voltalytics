@@ -61,12 +61,29 @@ export default function GoERealTimeCard({user}: GoECardProps) {
         await Db.saveUser(session, {...user, chargeWithExcessIsOn: isOn});
         await setChargingSpeed(!isOn);
     }
+    
+    const getCarStatus = () : "waiting"|"charging"|"charged"|"unknown" => {
+        if(goEStatus?.goe?.car === 1 || goEStatus?.goe?.car === 3)
+            return "waiting";
+        if(goEStatus?.goe?.car === 2)
+            return "charging";
+        if(goEStatus?.goe?.car === 4)
+            return "charged";
+        return  "unknown";
+    }
+    
+    const enableButtons = (): boolean => {
+        return ["waiting", "charging"].includes(getCarStatus());
+    }
 
     const renderGoEStatus = () => {
         if (!goEStatus) return null;
-        const car = goEStatus.goe?.car ?? 0;
-        if (!car)
-            return <div className={"text-sm text-slate-400"}>No car</div>;
+        
+        if(getCarStatus() === "unknown")
+            return <div className={"text-sm text-red-400"}>no car {goEStatus.car}</div>;
+
+        if(getCarStatus() === "charged")
+            return <div className={"text-sm text-green-400"}>car already charged</div>;
 
         const currentKw = goEStatus.goe?.currentKw ?? 0;
 
@@ -105,7 +122,7 @@ export default function GoERealTimeCard({user}: GoECardProps) {
                     <h1>go-e live data</h1>
                     {renderLoadingOrData()}
                 </div>
-                {!loading &&
+                {!loading && enableButtons() &&
                     <div>
                         <ArrowPathIcon width={30} height={30} className={"text-pink-400 mb-4"}
                                        onClick={() => setChargingSpeed()}/>

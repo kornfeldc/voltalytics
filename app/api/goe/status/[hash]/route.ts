@@ -52,7 +52,7 @@ export async function GET(request: Request, {params}: { params: Params }) {
         if (mode !== "readonly") {
             if (forceStop === "1")
                 chargeResponse = await goe.setChargingSpeed(0, 0);
-            else if (excessSuggestion.suggestion.mode === "charge")
+            else if (excessSuggestion.suggestion.mode === "charge" && goeStatus.car !== 4)
                 chargeResponse = await goe.setChargingSpeed(currentKw, excessSuggestion.suggestion.kw);
             else if (excessSuggestion.suggestion.mode === "dont_charge")
                 chargeResponse = await goe.setChargingSpeed(currentKw, 0);
