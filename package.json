@@ -30,6 +30,12 @@
     "supabase": "^1.49.4",
     "typescript": "5.0.2"
   },
+  "overrides": {
+    "react-json-view": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    }
+  },
   "devDependencies": {
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.21",
