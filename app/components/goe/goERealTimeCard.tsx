@@ -19,6 +19,11 @@ export default function GoERealTimeCard({user}: GoECardProps) {
     const router = useRouter();
 
     useEffect(() => {
+        showStatusCode(false).then(_ => {
+        });
+    }, [user]);
+   
+    const showStatusCode = async (openCode = false) => {
         setLoading(true);
         const url = "/api/goe/status/" + user.hash + "?mode=readonly";
         fetch(url).then(response => {
@@ -26,11 +31,16 @@ export default function GoERealTimeCard({user}: GoECardProps) {
                 response.json().then(data => {
                     setGoEStatus(data);
                     setLoading(false);
+                    if (openCode) {
+                        const jsonHash = (new Date()).getTime();
+                        window.localStorage.setItem(jsonHash.toString(), JSON.stringify(data));
+                        router.push("/json/" + jsonHash);
+                    }
                 });
             else
                 setLoading(false);
         });
-    }, [user]);
+    }
 
     const setChargingSpeed = async (forceStop = false) => {
         setLoading(true);
@@ -47,12 +57,14 @@ export default function GoERealTimeCard({user}: GoECardProps) {
 
         if (response.ok) {
             const data = await response.json();
-            alert(JSON.stringify(data));
+            const jsonHash = (new Date()).getTime();
+            window.localStorage.setItem(jsonHash.toString(), JSON.stringify(data));
+            router.push("/json/" + jsonHash);
         }
 
-        setTimeout(() => {
-            window.location.reload();
-        }, 1000);
+        // setTimeout(() => {
+        //     window.location.reload();
+        // }, 1000);
     }
 
     const enableExcessCharging = async (isOn: boolean) => {
@@ -61,28 +73,28 @@ export default function GoERealTimeCard({user}: GoECardProps) {
         await Db.saveUser(session, {...user, chargeWithExcessIsOn: isOn});
         await setChargingSpeed(!isOn);
     }
-    
-    const getCarStatus = () : "waiting"|"charging"|"charged"|"unknown" => {
-        if(goEStatus?.goe?.car === 1 || goEStatus?.goe?.car === 3)
+
+    const getCarStatus = (): "waiting" | "charging" | "charged" | "unknown" => {
+        if (goEStatus?.goe?.car === 3 || goEStatus?.goe?.car === 4)
             return "waiting";
-        if(goEStatus?.goe?.car === 2)
+        if (goEStatus?.goe?.car === 2)
             return "charging";
-        if(goEStatus?.goe?.car === 4)
-            return "charged";
-        return  "unknown";
+        // if (goEStatus?.goe?.car === 4)
+        //     return "charged";
+        return "unknown";
     }
-    
+
     const enableButtons = (): boolean => {
         return ["waiting", "charging"].includes(getCarStatus());
     }
 
     const renderGoEStatus = () => {
         if (!goEStatus) return null;
-        
-        if(getCarStatus() === "unknown")
+
+        if (getCarStatus() === "unknown")
             return <div className={"text-sm text-red-400"}>no car {goEStatus.car}</div>;
 
-        if(getCarStatus() === "charged")
+        if (getCarStatus() === "charged")
             return <div className={"text-sm text-green-400"}>car already charged</div>;
 
         const currentKw = goEStatus.goe?.currentKw ?? 0;
@@ -119,7 +131,7 @@ export default function GoERealTimeCard({user}: GoECardProps) {
         <div className="cursor-pointer">
             <div className={"flex"}>
                 <div className={"flex flex-col grow"}>
-                    <h1>go-e live data</h1>
+                    <h1 onClick={()=> showStatusCode(true)}>go-e live data</h1>
                     {renderLoadingOrData()}
                 </div>
                 {!loading && enableButtons() &&

@@ -47,20 +47,27 @@ export async function GET(request: Request, {params}: { params: Params }) {
 
         const phaseAndCurrent = goe.getPhaseAndCurrent(currentKw);
 
-        currentLine = "set speed";
+        currentLine = "determine set speed";
         let chargeResponse = {} as any;
         if (mode !== "readonly") {
-            if (forceStop === "1")
+            if (forceStop === "1") {
+                currentLine = "force stop";
                 chargeResponse = await goe.setChargingSpeed(0, 0);
-            else if (excessSuggestion.suggestion.mode === "charge" && goeStatus.car !== 4)
+            }
+            else if (excessSuggestion.suggestion.mode === "charge") {
+                currentLine = "turn charge on current " + currentKw + ", suggestion "+excessSuggestion.suggestion.kw;
                 chargeResponse = await goe.setChargingSpeed(currentKw, excessSuggestion.suggestion.kw);
-            else if (excessSuggestion.suggestion.mode === "dont_charge")
+            }
+            else if (excessSuggestion.suggestion.mode === "dont_charge") {
+                currentLine = "do not charge";
                 chargeResponse = await goe.setChargingSpeed(currentKw, 0);
+            }
         }
 
         return NextResponse.json({
             mode,
             forceStop, 
+            currentLine,
             excessSuggestion,
             goe: {
                 currentKw,
