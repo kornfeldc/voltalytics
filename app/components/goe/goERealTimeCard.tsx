@@ -59,7 +59,8 @@ export default function GoERealTimeCard({user}: GoECardProps) {
             const data = await response.json();
             const jsonHash = (new Date()).getTime();
             window.localStorage.setItem(jsonHash.toString(), JSON.stringify(data));
-            router.push("/json/" + jsonHash);
+            window.location.href = `/json/${jsonHash}`;
+            //router.push("/json/" + jsonHash);
         }
 
         // setTimeout(() => {

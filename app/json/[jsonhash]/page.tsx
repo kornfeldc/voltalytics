@@ -11,7 +11,8 @@ export default function JsonPage({params}: { params: any }) {
     const json = JSON.parse(window.localStorage.getItem(jsonHash)!);
 
     const back = () => {
-        router.back();
+        //router.back();
+        window.history.back();
     }
 
     return (
