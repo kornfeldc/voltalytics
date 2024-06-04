@@ -86,7 +86,7 @@ export class GoEApi {
             phase = phase == 3 ? 2 : phase;
             const charge = current > 0 && phase > 0;
             let endpoint = !charge 
-                    ? `${this.getEndpoint()}/api/set?amp=0&frc=0`
+                    ? `${this.getEndpoint()}/api/set?frc=1`
                     : `${this.getEndpoint()}/api/set?&amp=${current}&psm=${phase}&frc=2`;
             
             const response = await fetch(endpoint, {

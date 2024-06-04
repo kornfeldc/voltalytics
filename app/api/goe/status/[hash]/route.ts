@@ -50,17 +50,13 @@ export async function GET(request: Request, {params}: { params: Params }) {
         currentLine = "determine set speed";
         let chargeResponse = {} as any;
         if (mode !== "readonly") {
-            if (forceStop === "1") {
-                currentLine = "force stop";
+            if (forceStop === "1" || excessSuggestion.suggestion.mode === "dont_charge") {
+                currentLine = `dont_charge (forceStop ${forceStop} )`;
                 chargeResponse = await goe.setChargingSpeed(0, 0);
             }
             else if (excessSuggestion.suggestion.mode === "charge") {
                 currentLine = "turn charge on current " + currentKw + ", suggestion "+excessSuggestion.suggestion.kw;
                 chargeResponse = await goe.setChargingSpeed(currentKw, excessSuggestion.suggestion.kw);
-            }
-            else if (excessSuggestion.suggestion.mode === "dont_charge") {
-                currentLine = "do not charge";
-                chargeResponse = await goe.setChargingSpeed(currentKw, 0);
             }
         }
 
