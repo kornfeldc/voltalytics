@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import {Settings, SolarManApi} from "@/app/classes/solarManApi";
 
 export interface IPhaseAndCurrent {
     phase: number;
@@ -28,7 +29,7 @@ export class GoEApi {
         const diff = Math.abs(currentKw - targetKw);
         if (diff < diffLimit) 
             return;
-
+        
         const phaseAndCurrent = this.getPhaseAndCurrent(targetKw);
         return await this.setRawChargingSpeed(phaseAndCurrent.current, phaseAndCurrent.phase);
     }
@@ -62,6 +63,12 @@ export class GoEApi {
             current = 32; // Upper limit for three-phase
         } else if (current < 6) {
             current = 6; // Lower limit for safety
+        }
+        
+        // dont charge with "too high" kw on 1 phase, switch to 3 phases instead
+        if(kw > Settings.maxKwFor1Phase && phase === 1) {
+            phase = 3;
+            current = 6;
         }
 
         return {phase, current};

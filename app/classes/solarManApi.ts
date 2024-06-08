@@ -73,12 +73,13 @@ export interface ISolarManFrameStationDataItem {
     dateTime: number | null;
 }
 
-const Settings = {
+export const Settings = {
     minChargingPower: 1.5,
     maxChargingPower: 8,
     minMinutesOldForAction: 10,
     minBatterySoc: 25,
-    kwWhenBattery: 4.5
+    kwWhenBattery: 4.5,
+    maxKwFor1Phase: 3
 };
 
 export class SolarManApi {
