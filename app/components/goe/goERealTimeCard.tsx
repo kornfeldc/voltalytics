@@ -22,7 +22,7 @@ export default function GoERealTimeCard({user}: GoECardProps) {
         showStatusCode(false).then(_ => {
         });
     }, [user]);
-   
+
     const showStatusCode = async (openCode = false) => {
         setLoading(true);
         const url = "/api/goe/status/" + user.hash + "?mode=readonly";
@@ -99,12 +99,15 @@ export default function GoERealTimeCard({user}: GoECardProps) {
             return <div className={"text-sm text-green-400"}>car already charged</div>;
 
         const currentKw = goEStatus.goe?.currentKw ?? 0;
+        let currentPhaseAndCurrent = (goEStatus.goe?.phaseAndCurrent.phase === 2 ? 3 : goEStatus.goe?.phaseAndCurrent.phase);
+        currentPhaseAndCurrent += `p | ${goEStatus.goe?.phaseAndCurrent.current}a`;
 
         return (
             <div>
                 {currentKw === 0 && <div className={"text-sm text-slate-400"}>not charging</div>}
                 {currentKw > 0 && <span>charging with <span
-                    className={"text-lg text-pink-400"}>{goEStatus.goe.currentKw} kw</span></span>}
+                    className={"text-lg text-pink-400"}>{goEStatus.goe.currentKw} kw <span
+                    className={"pl-2 text-xs"}>{currentPhaseAndCurrent}</span></span></span>}
 
                 {goEStatus.excessSuggestion.suggestion.mode === "charge" &&
                     <div>suggestion: {goEStatus.excessSuggestion.suggestion.mode} with {goEStatus.excessSuggestion.suggestion.kw} kw</div>
@@ -132,23 +135,23 @@ export default function GoERealTimeCard({user}: GoECardProps) {
         <div className="cursor-pointer">
             <div className={"flex"}>
                 <div className={"flex flex-col grow"}>
-                    <h1 onClick={()=> showStatusCode(true)}>go-e live data</h1>
+                    <h1 onClick={() => showStatusCode(true)}>go-e live data</h1>
                     {renderLoadingOrData()}
                 </div>
-                {!loading && enableButtons() &&
-                    <div>
+                <div>
+                    {!loading && enableButtons() &&
                         <ArrowPathIcon width={30} height={30} className={"text-pink-400 mb-4"}
                                        onClick={() => setChargingSpeed()}/>
-                        {user.chargeWithExcessIsOn &&
-                            <StopIcon width={30} height={30} className={"text-red-400"}
-                                      onClick={() => enableExcessCharging(false)}/>
-                        }
-                        {!user.chargeWithExcessIsOn &&
-                            <PlayIcon width={30} height={30} className={"text-green-400"}
-                                      onClick={() => enableExcessCharging(true)}/>
-                        }
-                    </div>
-                }
+                    }
+                    {!loading && user.chargeWithExcessIsOn &&
+                        <StopIcon width={30} height={30} className={"text-red-400"}
+                                  onClick={() => enableExcessCharging(false)}/>
+                    }
+                    {!loading && !user.chargeWithExcessIsOn &&
+                        <PlayIcon width={30} height={30} className={"text-green-400"}
+                                  onClick={() => enableExcessCharging(true)}/>
+                    }
+                </div>
             </div>
         </div>);
 
