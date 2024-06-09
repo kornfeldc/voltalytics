@@ -247,7 +247,14 @@ export class SolarManApi {
         
         if(suggestion.mode === "dont_charge" && currentPrice !== undefined && currentPrice <= 0) {
             suggestion.mode = "charge";
-            suggestion.kw = Settings.kwWhenBattery;
+            if(currentPrice < -0.5)
+                suggestion.kw = 1.5;
+            if(currentPrice < -1.5)
+                suggestion.kw = 2.5;
+            if(currentPrice < -2.5)
+                suggestion.kw = 3.5;
+            if(currentPrice < -3.5)
+                suggestion.kw = Settings.kwWhenBattery;
         }
         
         if(!user.chargeWithExcessIsOn)
