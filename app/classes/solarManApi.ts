@@ -240,7 +240,7 @@ export class SolarManApi {
 
         if (suggestion.mode !== "no_change" &&
             suggestion.kw < Settings.kwWhenBattery &&
-            power.batterySoc >= Settings.minBatterySoc) {
+            power.batterySoc >= (user.chargeUntilMinBattery ?? Settings.minBatterySoc)) {
             suggestion.mode = "charge";
             suggestion.kw = Settings.kwWhenBattery;
         }

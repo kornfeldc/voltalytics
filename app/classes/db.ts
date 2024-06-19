@@ -11,6 +11,7 @@ export interface IUser {
     solarManAppEmail: string;
     solarManAppPw: string;
     chargeWithExcessIsOn: boolean;
+    chargeUntilMinBattery?: number;
     goEIsOn: boolean;
     goESerial: string;
     goEApiToken: string;
@@ -75,6 +76,7 @@ export class Db {
             solarManAppPw: dbUser.solarManAppPw,
             solarManIsOn: dbUser.solarManIsOn,
             chargeWithExcessIsOn: dbUser.chargeWithExcessIsOn,
+            chargeUntilMinBattery: dbUser.chargeUntilMinBattery,
             goEIsOn: dbUser.goEIsOn,
             goESerial: dbUser.goESerial,
             goEApiToken: dbUser.goEApiToken
@@ -94,6 +96,7 @@ export class Db {
                 solarManAppPw: user.solarManAppPw,
                 solarManIsOn: user.solarManIsOn,
                 chargeWithExcessIsOn: user.chargeWithExcessIsOn,
+                chargeUntilMinBattery: user.chargeUntilMinBattery,
                 goEIsOn: user.goEIsOn,
                 goESerial: user.goESerial,
                 goEApiToken: user.goEApiToken

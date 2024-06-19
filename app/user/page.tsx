@@ -4,10 +4,12 @@ import {signIn, signOut, useSession} from "next-auth/react";
 import Button from "@/app/components/button";
 import Info from "@/app/components/info";
 import {Db, IUser} from "@/app/classes/db";
+import {useRouter} from "next/navigation";
 
 export default function UserPage() {
     const {data: session} = useSession();
     const [user, setUser] = useState<IUser>();
+    const router = useRouter();
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -23,6 +25,7 @@ export default function UserPage() {
     const save = () => {
         if (!user || !session) return;
         Db.saveUser(session, user).then(() => {
+            router.push("/");
         });
     }
 
@@ -131,6 +134,17 @@ export default function UserPage() {
                                            ...user,
                                            chargeWithExcessIsOn: e.target.checked
                                        })}/> Activate Excess Charging
+                            </div>
+                        }
+                        {user.hash && user.goEIsOn && user.chargeWithExcessIsOn &&
+                            <div className="mt-2">
+                                <input 
+                                    className={"custom-input text-right w-14"}
+                                    type="number" value={user.chargeUntilMinBattery}
+                                       onChange={e => setUser({
+                                           ...user,
+                                           chargeUntilMinBattery: parseInt(e.target.value,10)
+                                       })}/> % Min. Battery SoC 
                             </div>
                         }
                         <div className="mt-12 flex">
