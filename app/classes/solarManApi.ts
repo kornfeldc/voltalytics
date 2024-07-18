@@ -170,7 +170,7 @@ export class SolarManApi {
 
                 let url = `${this.solarManUrl}/station/v1.0/realTime?language=en`;
                 if (force)
-                    url += (new Date()).getTime();
+                    url += `&${(new Date()).getTime()}`;
 
                 const response = await fetch(url, {
                     method: "POST",
@@ -186,8 +186,10 @@ export class SolarManApi {
                 let result = await response.json();
                 if (!result?.requestId) return;
                 
-                if(result && !result.success)
+                if(result && !result.success) {
                     result.token = token;
+                    result.stationId = stationId;
+                }
                 
                 return result as ISolarManRealTimeInfo;
             },

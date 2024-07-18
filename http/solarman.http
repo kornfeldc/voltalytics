@@ -2,4 +2,16 @@
 POST https://globalapi.solarmanpv.com/account/v1.0/token?appId={{solarManAppId}}
 Content-Type: application/json
 
-{ "appSecret": "{{appSecret}}", "email": "{{solarManAppEmail}}", "password": "{{solarManAppPassword}}" }
+{ 
+   "appSecret": "{{appSecret}}", 
+   "email": "{{solarManAppEmail}}", 
+   "password": "{{solarManAppPassword}}" 
+}
+
+> {% client.global.set("auth_token", response.body.access_token) %}
+
+
+### Get Station
+
+POST https://globalapi.solarmanpv.com/station/v1.0/realTime?language=en
+Authorization: Bearer {{auth_token}}
