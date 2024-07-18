@@ -195,7 +195,7 @@ export class SolarManApi {
         
         const realTimeInfo = await SolarManApi.getRealtimeInfo(user, true);
         if (!realTimeInfo) throw ("No RealTimeInfo");
-        if (!realTimeInfo.lastUpdateTime) throw ("No RealTimeInfo UpdateTime");
+        if (!realTimeInfo.lastUpdateTime) throw ("No RealTimeInfo UpdateTime "+JSON.stringify(realTimeInfo));
 
         const lastUpdateMoment = moment(realTimeInfo.lastUpdateTime * 1000);
         const minutesOld = moment().diff(lastUpdateMoment, "minutes");
