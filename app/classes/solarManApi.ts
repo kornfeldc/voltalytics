@@ -2,6 +2,7 @@ import {IUser} from "@/app/classes/db";
 import {VoltCache} from "@/app/classes/cache";
 import moment from "moment";
 import {AwattarApi} from "@/app/classes/awattarApi";
+import {CustomError} from "@/app/classes/customError";
 
 export interface ISolarManRealTimeInfo {
     success: boolean | null;
@@ -84,7 +85,7 @@ export const Settings = {
 
 export class SolarManApi {
     static solarManUrl = "/api/proxy";
-    static keyVersion = 3;
+    static keyVersion = 4;
 
     static async getToken(user: IUser, force = false): Promise<string | undefined> {
         return await VoltCache.get(
@@ -155,7 +156,7 @@ export class SolarManApi {
 
     }
 
-    static async getRealtimeInfo(user: IUser, force = false): Promise<ISolarManRealTimeInfo | undefined> {
+    static async getRealtimeInfo(user: IUser, force = false, retried = false): Promise<ISolarManRealTimeInfo | undefined> {
         const ret = await VoltCache.get(
             `solarMan_realTimeData_${this.keyVersion}`,
             user.email,
@@ -190,11 +191,13 @@ export class SolarManApi {
             force
         );
         
-        if(!ret.success && !force)
-            return await this.getRealtimeInfo(user, true);
+        var invalidResponse = !ret?.success;
 
-        if(!ret.success) 
-            alert("error on getting realtime info "+JSON.stringify(ret));
+        if(invalidResponse) 
+            VoltCache.cleanupCache();
+        
+        if(invalidResponse && !retried)
+            return await this.getRealtimeInfo(user, true, true);
         
         return ret;
     }
@@ -202,8 +205,8 @@ export class SolarManApi {
     static async getExcessChargeSuggestion(user: IUser, currentChargingKw = 0): Promise<ISolarManExcessSuggestion | undefined> {
         
         const realTimeInfo = await SolarManApi.getRealtimeInfo(user, true);
-        if (!realTimeInfo) throw ("No RealTimeInfo");
-        if (!realTimeInfo.lastUpdateTime) throw ("No RealTimeInfo UpdateTime "+JSON.stringify(realTimeInfo));
+        if (!realTimeInfo) throw new CustomError("No RealTimeInfo");
+        if (!realTimeInfo.lastUpdateTime) throw new CustomError("No RealTimeInfo UpdateTime", realTimeInfo);
 
         const lastUpdateMoment = moment(realTimeInfo.lastUpdateTime * 1000);
         const minutesOld = moment().diff(lastUpdateMoment, "minutes");

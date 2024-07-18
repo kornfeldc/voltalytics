@@ -53,4 +53,9 @@ export class VoltCache {
         }
         return data;
     }
+
+    static cleanupCache(): void {
+        // implement
+        localStorage.clear();
+    }
 }
