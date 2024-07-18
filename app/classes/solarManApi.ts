@@ -187,6 +187,7 @@ export class SolarManApi {
                 if (!result?.requestId) return;
                 
                 if(result && !result.success) {
+                    result.url = url;
                     result.token = token;
                     result.stationId = stationId;
                 }
