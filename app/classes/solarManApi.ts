@@ -183,8 +183,11 @@ export class SolarManApi {
 
                 if (!response.ok) return;
 
-                const result = await response.json();
+                let result = await response.json();
                 if (!result?.requestId) return;
+                
+                if(result && !result.success)
+                    result.token = token;
                 
                 return result as ISolarManRealTimeInfo;
             },
