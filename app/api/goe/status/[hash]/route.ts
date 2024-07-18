@@ -28,7 +28,7 @@ export async function GET(request: Request, {params}: { params: Params }) {
         return NextResponse.json({message: "Error on getting user"});
     }
 
-    let currentLine = "";
+    let currentLine = "beforeTry";
     try {
         const goe = new GoEApi(fetchedUser.goESerial, fetchedUser.goEApiToken);
         const goeStatus = await goe.getStatus();
@@ -78,6 +78,6 @@ export async function GET(request: Request, {params}: { params: Params }) {
             } 
         });
     } catch (e) {
-        return NextResponse.json({message: "Error on getting RealTimeInfo", e, currentLine});
+        return NextResponse.json({message: "Error on goe/status", e, currentLine});
     }
 }
