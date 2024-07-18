@@ -86,7 +86,7 @@ export class SolarManApi {
     static solarManUrl = "/api/proxy";
     static keyVersion = 3;
 
-    static async getToken(user: IUser): Promise<string | undefined> {
+    static async getToken(user: IUser, force = false): Promise<string | undefined> {
         return await VoltCache.get(
             `solarMan_token_${this.keyVersion}`,
             user.email,
@@ -114,7 +114,7 @@ export class SolarManApi {
 
                 const result = await response.json();
                 return result.access_token;
-            });
+            }, force);
     }
 
     static async getStationId(user: IUser, token: string | undefined = undefined): Promise<number | undefined> {
@@ -156,12 +156,12 @@ export class SolarManApi {
     }
 
     static async getRealtimeInfo(user: IUser, force = false): Promise<ISolarManRealTimeInfo | undefined> {
-        return await VoltCache.get(
+        const ret = await VoltCache.get(
             `solarMan_realTimeData_${this.keyVersion}`,
             user.email,
             60,
             async (): Promise<any> => {
-                const token = await this.getToken(user);
+                const token = await this.getToken(user, force);
                 if (!token) return;
 
                 const stationId = await this.getStationId(user, token);
@@ -184,11 +184,19 @@ export class SolarManApi {
 
                 const result = await response.json();
                 if (!result?.requestId) return;
-
+                
                 return result as ISolarManRealTimeInfo;
             },
             force
         );
+        
+        if(!ret.success && !force)
+            return await this.getRealtimeInfo(user, true);
+
+        if(!ret.success) 
+            alert("error on getting realtime info "+JSON.stringify(ret));
+        
+        return ret;
     }
 
     static async getExcessChargeSuggestion(user: IUser, currentChargingKw = 0): Promise<ISolarManExcessSuggestion | undefined> {
