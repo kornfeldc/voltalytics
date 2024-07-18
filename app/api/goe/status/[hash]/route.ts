@@ -39,30 +39,31 @@ export async function GET(request: Request, {params}: { params: Params }) {
             currentKw = (goeStatus?.nrg[11] ?? 0) / 1000;
         } catch {
         }
-        currentLine = "got currentKw";
+        currentLine = `got currentKw (${currentKw})`;
 
         SolarManApi.solarManUrl = "https://globalapi.solarmanpv.com";
         const excessSuggestion = await SolarManApi.getExcessChargeSuggestion(fetchedUser, currentKw);
+        currentLine = `excessSuggestion: ${JSON.stringify(excessSuggestion)}`;
+        
         if (!excessSuggestion) return;
 
         const phaseAndCurrent = goe.getPhaseAndCurrent(currentKw);
-
-        currentLine = "determine set speed";
+        currentLine = `determine set speed ${JSON.stringify(phaseAndCurrent)}`;
+        
         let chargeResponse = {} as any;
         if (mode !== "readonly") {
             if (forceStop === "1" || excessSuggestion.suggestion.mode === "dont_charge") {
                 currentLine = `dont_charge (forceStop ${forceStop} )`;
                 chargeResponse = await goe.setChargingSpeed(0, 0);
-            }
-            else if (excessSuggestion.suggestion.mode === "charge") {
-                currentLine = "turn charge on current " + currentKw + ", suggestion "+excessSuggestion.suggestion.kw;
+            } else if (excessSuggestion.suggestion.mode === "charge") {
+                currentLine = `turn charge on current ${currentKw}, suggestion ${excessSuggestion.suggestion.kw}`;
                 chargeResponse = await goe.setChargingSpeed(currentKw, excessSuggestion.suggestion.kw);
             }
         }
 
         return NextResponse.json({
             mode,
-            forceStop, 
+            forceStop,
             currentLine,
             excessSuggestion,
             goe: {
@@ -75,9 +76,13 @@ export async function GET(request: Request, {params}: { params: Params }) {
             },
             response: {
                 chargeResponse
-            } 
+            }
         });
-    } catch (e) {
-        return NextResponse.json({message: "Error on goe/status", e, currentLine});
+    } catch (e: any) {
+        return NextResponse.json({
+            message: "Error on goe/status", 
+            error: e.message, 
+            additionalInfo: e.additionalInfo, 
+            currentLine});
     }
 }
