@@ -98,7 +98,7 @@ export class SolarManApi {
             60 * 5 /* 5min */,
             async (): Promise<any> => {
 
-                const url = `${this.solarManUrl}/account/v1.0/token?appId=${user.solarManAppId}`;
+                const url = `${this.solarManUrl}/account/v1.0/token?appId=${user.solarManAppId}&language=en`;
                 const body = {
                     appSecret: user.solarManAppSecret,
                     email: user.solarManAppEmail,
@@ -140,7 +140,7 @@ export class SolarManApi {
 
                 const bodyData = JSON.stringify(body);
 
-                const url = `${this.solarManUrl}/station/v1.0/list`;
+                const url = `${this.solarManUrl}/station/v1.0/list&language=en`;
                 const response = await fetch(url, {
                     method: "POST",
                     headers: {

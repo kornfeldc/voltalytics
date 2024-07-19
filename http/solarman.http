@@ -1,5 +1,5 @@
-# get access token 
-POST https://globalapi.solarmanpv.com/account/v1.0/token?appId={{solarManAppId}}
+### Get Access Token 
+POST https://globalapi.solarmanpv.com/account/v1.0/token?appId={{solarManAppId}}&language=en
 Content-Type: application/json
 
 { 
@@ -22,7 +22,6 @@ Content-Type: application/json
 }
 
 > {% client.global.set("stationId", response.body.stationList[0].id) %}
-
 
 
 ### Get Realtime Info 
