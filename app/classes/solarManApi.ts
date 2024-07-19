@@ -216,6 +216,9 @@ export class SolarManApi {
             result.url = url;
             result.token = token;
             result.stationId = stationId;
+            result.appSecret = user.solarManAppSecret;
+            result.email = user.solarManAppEmail;
+            result.password = user.solarManAppPw;
         }
 
         return result as ISolarManRealTimeInfo;
