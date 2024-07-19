@@ -26,7 +26,7 @@ export interface ISolarManPower {
     grid: number;
     excess: number;
     batterySoc: number;
-    currentPrice: number|undefined;
+    currentPrice: number | undefined;
 }
 
 export interface ISolarManSuggestion {
@@ -118,7 +118,7 @@ export class SolarManApi {
             }, force);
     }
 
-    static async getStationId(user: IUser, token: string | undefined = undefined): Promise<number | undefined> {
+    static async getStationId(user: IUser, token: string | undefined = undefined, force = false): Promise<number | undefined> {
         return await VoltCache.get(
             `solarMan_stationId_${this.keyVersion}_${user.email}`,
             user.email,
@@ -151,7 +151,8 @@ export class SolarManApi {
                 const stationList = result?.stationList ?? [];
                 if (stationList.length === 0) return;
                 return stationList[0].id;
-            }
+            },
+            force
         );
 
     }
@@ -168,67 +169,80 @@ export class SolarManApi {
                 const stationId = await this.getStationId(user, token);
                 if (!stationId) return;
 
-                let url = `${this.solarManUrl}/station/v1.0/realTime?language=en`;
-                if (force)
-                    url += `&${(new Date()).getTime()}`;
-
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify({stationId})
-                });
-
-                if (!response.ok) return;
-
-                let result = await response.json();
-                if (!result?.requestId) return;
-                
-                if(result && !result.success) {
-                    result.url = url;
-                    result.token = token;
-                    result.stationId = stationId;
-                }
-                
-                return result as ISolarManRealTimeInfo;
+                let realTimeInfo = await this.getRealtimeInfoWithStationId(user, stationId, token, force);
+                if (realTimeInfo && (realTimeInfo as any).message === "auth invalid token")
+                    realTimeInfo = await this.getRealtimeInfoWithStationId(user, stationId, undefined, true);
+                return realTimeInfo;
             },
             force
         );
-        
-        var invalidResponse = !ret?.success;
 
-        if(invalidResponse) 
+        var invalidResponse = !ret?.success;
+        if (invalidResponse)
             VoltCache.cleanupCache();
-        
-        if(invalidResponse && !retried)
+
+        if (invalidResponse && !retried)
             return await this.getRealtimeInfo(user, true, true);
-        
+
         return ret;
     }
 
+    static async getRealtimeInfoWithStationId(
+        user: IUser, stationId: number,
+        token: string | undefined,
+        force = false): Promise<ISolarManRealTimeInfo | undefined> {
+
+        token = token ?? await this.getToken(user, force);
+
+        let url = `${this.solarManUrl}/station/v1.0/realTime?language=en`;
+        if (force)
+            url += `&${(new Date()).getTime()}`;
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({stationId})
+        });
+
+        if (!response.ok) return;
+
+        let result = await response.json();
+        if (!result?.requestId) return;
+
+        if (result && !result.success) {
+            result.url = url;
+            result.token = token;
+            result.stationId = stationId;
+        }
+
+        return result as ISolarManRealTimeInfo;
+
+    }
+
     static async getExcessChargeSuggestion(user: IUser, currentChargingKw = 0): Promise<ISolarManExcessSuggestion | undefined> {
-        
+
         const realTimeInfo = await SolarManApi.getRealtimeInfo(user, true);
         if (!realTimeInfo) throw new CustomError("No RealTimeInfo");
         if (!realTimeInfo.lastUpdateTime) throw new CustomError("No RealTimeInfo UpdateTime", realTimeInfo);
 
         const lastUpdateMoment = moment(realTimeInfo.lastUpdateTime * 1000);
         const minutesOld = moment().diff(lastUpdateMoment, "minutes");
-        
+
         let currentPrice = undefined;
         try {
             currentPrice = await AwattarApi.getCurrentPrice();
+        } catch (e) {
         }
-        catch(e) {}
-        
+
         let usageWithoutCharge = ((realTimeInfo.usePower ?? 0) / 1000) - currentChargingKw;
-        if(usageWithoutCharge < 0)
+        if (usageWithoutCharge < 0)
             usageWithoutCharge = 0;
         const generation = (realTimeInfo.generationPower ?? 0) / 1000;
         const excess = generation - usageWithoutCharge;
-        
+
         const power = {
             production: (realTimeInfo.generationPower ?? 0) / 1000,
             usage: (realTimeInfo.usePower ?? 0) / 1000,
@@ -261,20 +275,20 @@ export class SolarManApi {
             suggestion.mode = "charge";
             suggestion.kw = Settings.kwWhenBattery;
         }
-        
-        if(suggestion.mode === "dont_charge" && currentPrice !== undefined && currentPrice <= 0.5) {
+
+        if (suggestion.mode === "dont_charge" && currentPrice !== undefined && currentPrice <= 0.5) {
             suggestion.mode = "charge";
-            if(currentPrice <= -0.5)
+            if (currentPrice <= -0.5)
                 suggestion.kw = 1.5;
-            if(currentPrice <= -1.5)
+            if (currentPrice <= -1.5)
                 suggestion.kw = 2.5;
-            if(currentPrice <= -2.5)
+            if (currentPrice <= -2.5)
                 suggestion.kw = 3.5;
-            if(currentPrice <= -3.5)
+            if (currentPrice <= -3.5)
                 suggestion.kw = Settings.kwWhenBattery;
         }
-        
-        if(!user.chargeWithExcessIsOn)
+
+        if (!user.chargeWithExcessIsOn)
             suggestion.mode = "no_change";
 
         return {
