@@ -203,19 +203,13 @@ export class SolarManApi {
         if (force)
             url += `&${(new Date()).getTime()}`;
 
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${tokenObj.access_token}`
-            },
-            body: JSON.stringify({stationId})
-        });
-
-        if (!response.ok) return;
-
-        let result = await response.json();
+        let result = await this.getRealTimeInfoResponse(url, stationId, tokenObj.access_token);
         if (!result?.requestId) return;
+
+        if (result && !result.success) {
+            result = await this.getRealTimeInfoResponse(url, stationId, tokenObj.refresh_token);
+            if (!result?.requestId) return;
+        }
 
         if (result && !result.success) {
             result.url = url;
@@ -229,6 +223,24 @@ export class SolarManApi {
 
         return result as ISolarManRealTimeInfo;
 
+    }
+    
+    static async getRealTimeInfoResponse(url: string, stationId: number, token: string): Promise<any | undefined> {
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({stationId})
+        });
+
+        if (!response.ok) return;
+
+        let result = await response.json();
+        if (!result?.requestId) return;
+        return result;
     }
 
     static async getExcessChargeSuggestion(user: IUser, currentChargingKw = 0): Promise<ISolarManExcessSuggestion | undefined> {
