@@ -27,8 +27,8 @@ Content-Type: application/json
 
 ### Get Realtime Info 
 
-POST https://globalapi.solarmanpv.com/station/v1.0/realTime?language=en
-Authorization: Bearer {{auth_token}}
+POST https://globalapi.solarmanpv.com/station/v1.0/realTime?language=en&1721367391216
+Authorization: Bearer {{auth_token}} 
 Content-Type: application/json
 
 {
