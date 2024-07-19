@@ -85,9 +85,13 @@ export const Settings = {
 
 export class SolarManApi {
     static solarManUrl = "/api/proxy";
-    static keyVersion = 4;
+    static keyVersion = 5;
 
     static async getToken(user: IUser, force = false): Promise<string | undefined> {
+        return (await this.getTokenObject(user, force))?.access_token;
+    }
+
+    static async getTokenObject(user: IUser, force = false): Promise<any | undefined> {
         return await VoltCache.get(
             `solarMan_token_${this.keyVersion}_${user.email}`,
             user.email,
@@ -113,8 +117,9 @@ export class SolarManApi {
 
                 if (!response.ok) return;
 
-                const result = await response.json();
-                return result.access_token;
+                let result = await response.json();
+                result.timestamp = moment().format("YYYY-MM-DD HH:mm:ss");
+                return result;
             }, force);
     }
 
@@ -163,13 +168,13 @@ export class SolarManApi {
             user.email,
             60,
             async (): Promise<any> => {
-                const token = await this.getToken(user, force);
-                if (!token) return;
+                const tokenObj = await this.getTokenObject(user, force);
+                if (!tokenObj) return;
 
-                const stationId = await this.getStationId(user, token);
+                const stationId = await this.getStationId(user, tokenObj?.access_token);
                 if (!stationId) return;
 
-                let realTimeInfo = await this.getRealtimeInfoWithStationId(user, stationId, token, force);
+                let realTimeInfo = await this.getRealtimeInfoWithStationId(user, stationId, tokenObj, force);
                 if (realTimeInfo && (realTimeInfo as any).message === "auth invalid token")
                     realTimeInfo = await this.getRealtimeInfoWithStationId(user, stationId, undefined, true);
                 return realTimeInfo;
@@ -189,10 +194,10 @@ export class SolarManApi {
 
     static async getRealtimeInfoWithStationId(
         user: IUser, stationId: number,
-        token: string | undefined,
+        tokenObj: any | undefined,
         force = false): Promise<ISolarManRealTimeInfo | undefined> {
 
-        token = token ?? await this.getToken(user, force);
+        tokenObj = tokenObj ?? await this.getTokenObject(user, force);
 
         let url = `${this.solarManUrl}/station/v1.0/realTime?language=en`;
         if (force)
@@ -202,7 +207,7 @@ export class SolarManApi {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
+                "Authorization": `Bearer ${tokenObj.access_token}`
             },
             body: JSON.stringify({stationId})
         });
@@ -214,8 +219,9 @@ export class SolarManApi {
 
         if (result && !result.success) {
             result.url = url;
-            result.token = token;
+            result.tokenObj = tokenObj;
             result.stationId = stationId;
+            result.appId = user.solarManAppId;
             result.appSecret = user.solarManAppSecret;
             result.email = user.solarManAppEmail;
             result.password = user.solarManAppPw;
