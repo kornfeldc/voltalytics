@@ -76,6 +76,7 @@ export class Db {
             solarManAppEmail: dbUser.solarManAppEmail,
             solarManAppPw: dbUser.solarManAppPw,
             solarManIsOn: dbUser.solarManIsOn,
+            solarManLastAccessToken: dbUser.solarManLastAccessToken,
             chargeWithExcessIsOn: dbUser.chargeWithExcessIsOn,
             chargeUntilMinBattery: dbUser.chargeUntilMinBattery,
             goEIsOn: dbUser.goEIsOn,
