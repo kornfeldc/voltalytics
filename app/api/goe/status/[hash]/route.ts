@@ -24,6 +24,7 @@ export async function GET(request: Request, {params}: { params: Params }) {
         if (!fetchedUser.goEApiToken) return NextResponse.json({message: "No go e api token"});
         if (!fetchedUser.goESerial) return NextResponse.json({message: "No go e serial nr"});
         if (!fetchedUser.goEIsOn) return NextResponse.json({message: "No go e integration"});
+        if (!fetchedUser.solarManLastAccessToken) return NextResponse.json({message: "No solarMan access token"});
     } catch (e) {
         return NextResponse.json({message: "Error on getting user"});
     }

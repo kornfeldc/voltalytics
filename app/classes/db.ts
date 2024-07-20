@@ -10,6 +10,7 @@ export interface IUser {
     solarManAppSecret: string;
     solarManAppEmail: string;
     solarManAppPw: string;
+    solarManLastAccessToken: string;
     chargeWithExcessIsOn: boolean;
     chargeUntilMinBattery?: number;
     goEIsOn: boolean;
@@ -100,6 +101,16 @@ export class Db {
                 goEIsOn: user.goEIsOn,
                 goESerial: user.goESerial,
                 goEApiToken: user.goEApiToken
+            })
+            .eq("email", session.user!.email);
+    }
+
+    static async saveUserSolarManToken(session: Session, token: string) {
+        const supabase = this.getClient();
+        const {error} = await supabase
+            .from('user')
+            .update({
+                solarManLastAccessToken: token
             })
             .eq("email", session.user!.email);
     }

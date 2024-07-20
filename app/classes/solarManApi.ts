@@ -16,6 +16,7 @@ export interface ISolarManRealTimeInfo {
     dischargePower: number | null;
     batteryPower: number | null;
     generationTotal: number | null;
+    token: string | null; 
 }
 
 export interface ISolarManPower {
@@ -161,7 +162,7 @@ export class SolarManApi {
             user.email,
             60,
             async (): Promise<any> => {
-                const token = await this.getToken(user);
+                const token = user.solarManLastAccessToken ?? await this.getToken(user);
                 if (!token) return;
 
                 const stationId = await this.getStationId(user, token);
@@ -185,6 +186,8 @@ export class SolarManApi {
                 const result = await response.json();
                 if (!result?.requestId) return;
 
+                result.token = token;
+                
                 return result as ISolarManRealTimeInfo;
             },
             force

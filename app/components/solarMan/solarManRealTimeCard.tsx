@@ -1,12 +1,14 @@
 import Card from "@/app/components/card";
 import React, {useEffect, useState} from "react";
 import {ISolarManRealTimeInfo, SolarManApi} from "@/app/classes/solarManApi";
-import {IUser} from "@/app/classes/db";
+import {Db, IUser} from "@/app/classes/db";
 import moment from "moment";
 import LoadingSpinner from "@/app/components/loadingSpinner";
 import SolarManLiveDiagram from "@/app/components/solarMan/solarManLiveDiagram";
 import SolarManDayChartContainer from "@/app/components/solarMan/solarManDayChartContainer";
 import {AwattarApi} from "@/app/classes/awattarApi";
+import {session} from "next-auth/core/routes";
+import {useSession} from "next-auth/react";
 
 interface SolarManCardProps {
     user: IUser;
@@ -14,6 +16,7 @@ interface SolarManCardProps {
 
 export default function SolarManRealTimeCard({user}: SolarManCardProps) {
 
+    const {data: session} = useSession();
     const [realTimeData, setRealTimeData] = useState<ISolarManRealTimeInfo | undefined>();
     const [currentPrice, setCurrentPrice] = useState<number | undefined>();
     const [loading, setLoading] = useState(true);
@@ -21,6 +24,12 @@ export default function SolarManRealTimeCard({user}: SolarManCardProps) {
     useEffect(() => {
         setLoading(true);
         SolarManApi.getRealtimeInfo(user).then(data => {
+            
+            if(session && data?.success && data?.token && data.token !== user.solarManLastAccessToken) {
+                user.solarManLastAccessToken = data.token;
+                Db.saveUserSolarManToken(session, data.token);
+            }
+            
             setRealTimeData(data);
             AwattarApi.getCurrentPrice().then(price => {
                 setCurrentPrice(price);
