@@ -26,6 +26,6 @@ export async function GET(request: Request, {params}: { params: Params }) {
         const suggestion = await SolarManApi.getExcessChargeSuggestion(fetchedUser);
         return NextResponse.json(suggestion);
     } catch (e) {
-        return NextResponse.json({message: "Error on getting RealTimeInfo"});
+        return NextResponse.json({message: "Error on getExcessChargeSuggestion", e});
     }
 }
