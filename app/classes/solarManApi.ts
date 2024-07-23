@@ -234,7 +234,7 @@ export class SolarManApi {
         
         if(user.forceChargeIsOn && 
             user.forceChargeKw !== undefined &&
-            (currentPrice !== undefined && currentPrice <= (user.forceChargeUnderCent ?? 20))) {
+            (currentPrice !== undefined && currentPrice < (user.forceChargeUnderCent ?? 20))) {
            suggestion.mode = "charge";
            suggestion.kw = user.forceChargeKw;
         } else {
