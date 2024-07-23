@@ -147,6 +147,37 @@ export default function UserPage() {
                                        })}/> % Min. Battery SoC 
                             </div>
                         }
+                        {user.hash && user.goEIsOn && user.chargeWithExcessIsOn &&
+                            <div className="mt-2">
+                                <input type="checkbox" checked={user.forceChargeIsOn}
+                                       onChange={e => setUser({
+                                           ...user,
+                                           forceChargeIsOn: e.target.checked
+                                       })}/>  Force Charge
+                            </div>
+                        }
+                        {user.hash && user.goEIsOn && user.chargeWithExcessIsOn && user.forceChargeIsOn &&
+                            <div className="mt-2">
+                                <input
+                                    className={"custom-input text-right w-14"}
+                                    type="number" value={user.forceChargeKw}
+                                    onChange={e => setUser({
+                                        ...user,
+                                        forceChargeKw: parseFloat(e.target.value)
+                                    })}/> Force Charge Kw 
+                            </div>
+                        }
+                        {user.hash && user.goEIsOn && user.chargeWithExcessIsOn && user.forceChargeIsOn &&
+                            <div className="mt-2">
+                                <input
+                                    className={"custom-input text-right w-14"}
+                                    type="number" value={user.forceChargeUnderCent}
+                                    onChange={e => setUser({
+                                        ...user,
+                                        forceChargeUnderCent: parseFloat(e.target.value)
+                                    })}/> Force Charge when under Cent 
+                            </div>
+                        }
                         <div className="mt-12 flex">
                             <div className={"mr-2"}>
                                 <Button onClick={() => save()}>Save</Button>

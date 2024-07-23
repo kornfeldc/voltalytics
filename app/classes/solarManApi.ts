@@ -231,33 +231,40 @@ export class SolarManApi {
             mode: "dont_charge",
             kw: 0
         } as ISolarManSuggestion;
-
-        if (minutesOld > Settings.minMinutesOldForAction)
-            suggestion.mode = "no_change";
-        else if (user.chargeWithExcessIsOn && power.excess > Settings.minChargingPower) {
-            suggestion.mode = "charge";
-            suggestion.kw = Math.round(power.excess * 10) / 10;
-            if (suggestion.kw >= Settings.maxChargingPower)
-                suggestion.kw = Settings.maxChargingPower;
-        }
-
-        if (suggestion.mode !== "no_change" &&
-            suggestion.kw < Settings.kwWhenBattery &&
-            power.batterySoc >= (user.chargeUntilMinBattery ?? Settings.minBatterySoc)) {
-            suggestion.mode = "charge";
-            suggestion.kw = Settings.kwWhenBattery;
-        }
         
-        if(suggestion.mode === "dont_charge" && currentPrice !== undefined && currentPrice <= 0.5) {
-            suggestion.mode = "charge";
-            if(currentPrice <= -0.5)
-                suggestion.kw = 1.5;
-            if(currentPrice <= -1.5)
-                suggestion.kw = 2.5;
-            if(currentPrice <= -2.5)
-                suggestion.kw = 3.5;
-            if(currentPrice <= -3.5)
+        if(user.forceChargeIsOn && 
+            user.forceChargeKw !== undefined &&
+            (currentPrice !== undefined && currentPrice <= (user.forceChargeUnderCent ?? 20))) {
+           suggestion.mode = "charge";
+           suggestion.kw = user.forceChargeKw;
+        } else {
+            if (minutesOld > Settings.minMinutesOldForAction)
+                suggestion.mode = "no_change";
+            else if (user.chargeWithExcessIsOn && power.excess > Settings.minChargingPower) {
+                suggestion.mode = "charge";
+                suggestion.kw = Math.round(power.excess * 10) / 10;
+                if (suggestion.kw >= Settings.maxChargingPower)
+                    suggestion.kw = Settings.maxChargingPower;
+            }
+
+            if (suggestion.mode !== "no_change" &&
+                suggestion.kw < Settings.kwWhenBattery &&
+                power.batterySoc >= (user.chargeUntilMinBattery ?? Settings.minBatterySoc)) {
+                suggestion.mode = "charge";
                 suggestion.kw = Settings.kwWhenBattery;
+            }
+
+            if(suggestion.mode === "dont_charge" && currentPrice !== undefined && currentPrice <= 0.5) {
+                suggestion.mode = "charge";
+                if(currentPrice <= -0.5)
+                    suggestion.kw = 1.5;
+                if(currentPrice <= -1.5)
+                    suggestion.kw = 2.5;
+                if(currentPrice <= -2.5)
+                    suggestion.kw = 3.5;
+                if(currentPrice <= -3.5)
+                    suggestion.kw = Settings.kwWhenBattery;
+            }
         }
         
         if(!user.chargeWithExcessIsOn)
@@ -265,6 +272,10 @@ export class SolarManApi {
 
         return {
             useChargeWithExcessIsOn: user.chargeWithExcessIsOn,
+            forceChargeIsOn: user.forceChargeIsOn,
+            forceChargeKw: user.forceChargeKw,
+            forceChargeUnderCent: user.forceChargeUnderCent,
+            currentPrice,
             lastUpdate: lastUpdateMoment.format("YYYY-MM-DD HH:mm:ss"),
             minutesOld,
             power,
