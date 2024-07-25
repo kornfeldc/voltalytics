@@ -3,10 +3,11 @@ import Card from "@/app/components/card";
 import React, {useEffect, useState} from "react";
 import {Db, IUser} from "@/app/classes/db";
 import LoadingSpinner from "@/app/components/loadingSpinner";
-import {ArrowPathIcon, StopIcon} from "@heroicons/react/24/solid";
+import {ArrowPathIcon, BoltIcon as BoltIconSolid, StopIcon} from "@heroicons/react/24/solid";
 import {PlayIcon} from "@heroicons/react/20/solid";
 import {useSession} from "next-auth/react";
 import {useRouter} from "next/navigation";
+import {BoltIcon as BoltIconOutline} from "@heroicons/react/24/outline";
 
 interface GoECardProps {
     user: IUser;
@@ -17,8 +18,10 @@ export default function GoERealTimeCard({user}: GoECardProps) {
     const [goEStatus, setGoEStatus] = useState<any | undefined>();
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const [forceChargeParams, setForceChargeParams] = useState<{ kw: number, cent: number }>({kw: 0, cent: 0});
 
     useEffect(() => {
+        setForceChargeParams({kw: user.forceChargeKw ?? 5, cent: user.forceChargeUnderCent ?? 20});
         showStatusCode(false).then(_ => {
         });
     }, [user]);
@@ -42,7 +45,22 @@ export default function GoERealTimeCard({user}: GoECardProps) {
         });
     }
 
-    const setChargingSpeed = async (forceStop = false) => {
+    const setForceCharge = async (forceChargeKw: number, forceChargeUnderCent: number) => {
+        if (!user || !session) return;
+        setLoading(true);
+        await Db.saveUser(session, {...user, forceChargeKw: forceChargeKw, forceChargeUnderCent: forceChargeUnderCent});
+        await setChargingSpeed(false, false);
+        return;
+    }
+
+    const toggleForceCharging = async (isOn: boolean) => {
+        if (!user || !session) return;
+        setLoading(true);
+        await Db.saveUser(session, {...user, forceChargeIsOn: isOn});
+        await setChargingSpeed(false, false);
+    }
+
+    const setChargingSpeed = async (forceStop = false, showDebugInfo = true) => {
         setLoading(true);
         let url = "/api/goe/status/" + user.hash;
         if (forceStop)
@@ -55,17 +73,17 @@ export default function GoERealTimeCard({user}: GoECardProps) {
             return;
         }
 
-        if (response.ok) {
+        if (response.ok && showDebugInfo) {
             const data = await response.json();
             const jsonHash = (new Date()).getTime();
             window.localStorage.setItem(jsonHash.toString(), JSON.stringify(data));
             window.location.href = `/json/${jsonHash}`;
-            //router.push("/json/" + jsonHash);
+            return;
         }
 
-        // setTimeout(() => {
-        //     window.location.reload();
-        // }, 1000);
+        setTimeout(() => {
+            window.location.reload();
+        },1000);
     }
 
     const enableExcessCharging = async (isOn: boolean) => {
@@ -140,20 +158,75 @@ export default function GoERealTimeCard({user}: GoECardProps) {
                 </div>
                 <div>
                     {!loading && enableButtons() &&
-                        <ArrowPathIcon width={30} height={30} className={"text-pink-400 mb-4"}
-                                       onClick={() => setChargingSpeed()}/>
+                        <div className={"flex flex-row grow"}>
+                            {user.forceChargeIsOn &&
+                                <BoltIconSolid width={30} height={30} className={"text-amber-400 mb-4 mr-4"}
+                                               onClick={() => toggleForceCharging(false)}/>
+                            }
+                            {!user.forceChargeIsOn &&
+                                <BoltIconOutline width={30} height={30} className={"text-amber-400 mb-4 mr-4"}
+                                                 onClick={() => toggleForceCharging(true)}/>
+                            }
+                            <ArrowPathIcon width={30} height={30} className={"text-pink-400 mb-4"}
+                                           onClick={() => setChargingSpeed()}/>
+                        </div>
                     }
-                    {!loading && user.chargeWithExcessIsOn &&
-                        <StopIcon width={30} height={30} className={"text-red-400"}
-                                  onClick={() => enableExcessCharging(false)}/>
-                    }
-                    {!loading && !user.chargeWithExcessIsOn &&
-                        <PlayIcon width={30} height={30} className={"text-green-400"}
-                                  onClick={() => enableExcessCharging(true)}/>
-                    }
+
+                    <div className={"flex flex-row grow justify-end"}>
+                        {!loading && user.chargeWithExcessIsOn &&
+                            <StopIcon width={30} height={30} className={"text-red-400"}
+                                      onClick={() => enableExcessCharging(false)}/>
+                        }
+                        {!loading && !user.chargeWithExcessIsOn &&
+                            <PlayIcon width={30} height={30} className={"text-green-400"}
+                                      onClick={() => enableExcessCharging(true)}/>
+                        }
+                    </div>
                 </div>
             </div>
         </div>);
 
-    return (<Card>{renderCardBase()}</Card>);
+    const renderForceChargeSettings = () => (
+        <div>
+            {!loading && user.chargeWithExcessIsOn && user.forceChargeIsOn &&
+                <div className={"flex flex-col grow mt-4"}>
+                    <label htmlFor="forceCharge">Force Charge under Cent</label>
+                    <div className={"flex flex-row grow"}>
+                        <input
+                            className={"grow mr-4"}
+                            type="range"
+                            min={-10}
+                            max={20}
+                            step={0.1}
+                            value={forceChargeParams.cent}
+                            onChange={e => setForceChargeParams({
+                                kw: user.forceChargeKw ?? 5,
+                                cent: parseFloat(e.target.value)
+                            })}
+                            onMouseUp={_ => setForceCharge(forceChargeParams.kw, forceChargeParams.cent)}/>
+                        {forceChargeParams.cent}
+                    </div>
+
+                    <label htmlFor="forceCharge">Force Charge KW</label>
+                    <div className={"flex flex-row grow"}>
+                        <input
+                            className={"grow mr-4"}
+                            type="range"
+                            min={1}
+                            max={10}
+                            step={0.5}
+                            value={forceChargeParams.kw}
+                            onChange={e => setForceChargeParams({
+                                kw: parseFloat(e.target.value),
+                                cent: user.forceChargeUnderCent ?? 20
+                            })}
+                            onMouseUp={_ => setForceCharge(forceChargeParams.kw, forceChargeParams.cent)}/>
+                        {forceChargeParams.kw}
+                    </div>
+                </div>
+            }
+        </div>
+    );
+
+    return (<Card>{renderCardBase()}{renderForceChargeSettings()}</Card>);
 }
