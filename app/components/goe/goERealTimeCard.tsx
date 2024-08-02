@@ -157,7 +157,7 @@ export default function GoERealTimeCard({user}: GoECardProps) {
                     {renderLoadingOrData()}
                 </div>
                 <div>
-                    {!loading && enableButtons() &&
+                    {!loading  &&
                         <div className={"flex flex-row grow"}>
                             {user.forceChargeIsOn &&
                                 <BoltIconSolid width={30} height={30} className={"text-amber-400 mb-4 mr-4"}
@@ -167,8 +167,10 @@ export default function GoERealTimeCard({user}: GoECardProps) {
                                 <BoltIconOutline width={30} height={30} className={"text-amber-400 mb-4 mr-4"}
                                                  onClick={() => toggleForceCharging(true)}/>
                             }
+                            {enableButtons() &&
                             <ArrowPathIcon width={30} height={30} className={"text-pink-400 mb-4"}
                                            onClick={() => setChargingSpeed()}/>
+                            }
                         </div>
                     }
 
@@ -188,7 +190,7 @@ export default function GoERealTimeCard({user}: GoECardProps) {
 
     const renderForceChargeSettings = () => (
         <div>
-            {!loading && user.chargeWithExcessIsOn && user.forceChargeIsOn &&
+            {!loading && user.chargeWithExcessIsOn &&
                 <div className={"flex flex-col grow mt-4"}>
                     <label htmlFor="forceCharge">Force Charge under Cent</label>
                     <div className={"flex flex-row grow"}>
@@ -203,7 +205,7 @@ export default function GoERealTimeCard({user}: GoECardProps) {
                                 kw: user.forceChargeKw ?? 5,
                                 cent: parseFloat(e.target.value)
                             })}
-                            onMouseUp={_ => setForceCharge(forceChargeParams.kw, forceChargeParams.cent)}/>
+                            onPointerUp={_ => setForceCharge(forceChargeParams.kw, forceChargeParams.cent)}/>
                         {forceChargeParams.cent}
                     </div>
 
@@ -220,7 +222,7 @@ export default function GoERealTimeCard({user}: GoECardProps) {
                                 kw: parseFloat(e.target.value),
                                 cent: user.forceChargeUnderCent ?? 20
                             })}
-                            onMouseUp={_ => setForceCharge(forceChargeParams.kw, forceChargeParams.cent)}/>
+                            onPointerUp={_ => setForceCharge(forceChargeParams.kw, forceChargeParams.cent)}/>
                         {forceChargeParams.kw}
                     </div>
                 </div>
