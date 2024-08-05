@@ -19,12 +19,13 @@ export default function GoERealTimeCard({user}: GoECardProps) {
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     const [forceChargeParams, setForceChargeParams] = useState<{ kw: number, cent: number }>({kw: 0, cent: 0});
+    const [forceRender, setForceRender] = useState(0);
 
     useEffect(() => {
         setForceChargeParams({kw: user.forceChargeKw ?? 5, cent: user.forceChargeUnderCent ?? 20});
         showStatusCode(false).then(_ => {
         });
-    }, [user]);
+    }, [user, forceRender]);
 
     const showStatusCode = async (openCode = false) => {
         setLoading(true);
@@ -47,21 +48,21 @@ export default function GoERealTimeCard({user}: GoECardProps) {
 
     const setForceCharge = async (forceChargeKw: number, forceChargeUnderCent: number) => {
         if (!user || !session) return;
-        setLoading(true);
         await Db.saveUser(session, {...user, forceChargeKw: forceChargeKw, forceChargeUnderCent: forceChargeUnderCent});
-        await setChargingSpeed(false, false);
-        return;
+        await setChargingSpeed(false, false, false);
     }
 
     const toggleForceCharging = async (isOn: boolean) => {
         if (!user || !session) return;
-        setLoading(true);
+        user.forceChargeIsOn = isOn;
         await Db.saveUser(session, {...user, forceChargeIsOn: isOn});
-        await setChargingSpeed(false, false);
+        await setChargingSpeed(false, false, false);
+        setForceRender(forceRender+1);
     }
 
-    const setChargingSpeed = async (forceStop = false, showDebugInfo = true) => {
-        setLoading(true);
+    const setChargingSpeed = async (forceStop = false, reload = true, showDebugInfo = true) => {
+        if(reload)
+            setLoading(true);
         let url = "/api/goe/status/" + user.hash;
         if (forceStop)
             url += "?forceStop=1"
@@ -81,6 +82,9 @@ export default function GoERealTimeCard({user}: GoECardProps) {
             return;
         }
 
+        if(!reload) 
+            return;
+            
         setTimeout(() => {
             window.location.reload();
         },1000);
@@ -160,27 +164,25 @@ export default function GoERealTimeCard({user}: GoECardProps) {
                     {!loading  &&
                         <div className={"flex flex-row grow"}>
                             {user.forceChargeIsOn &&
-                                <BoltIconSolid width={30} height={30} className={"text-amber-400 mb-4 mr-4"}
+                                <BoltIconSolid width={30} height={30} className={"cursor-pointer text-amber-400 mb-4 mr-4"}
                                                onClick={() => toggleForceCharging(false)}/>
                             }
                             {!user.forceChargeIsOn &&
-                                <BoltIconOutline width={30} height={30} className={"text-amber-400 mb-4 mr-4"}
+                                <BoltIconOutline width={30} height={30} className={"cursor-pointer text-amber-400 mb-4 mr-4"}
                                                  onClick={() => toggleForceCharging(true)}/>
                             }
-                            {enableButtons() &&
-                            <ArrowPathIcon width={30} height={30} className={"text-pink-400 mb-4"}
+                            <ArrowPathIcon width={30} height={30} className={"cursor-pointer text-pink-400 mb-4"}
                                            onClick={() => setChargingSpeed()}/>
-                            }
                         </div>
                     }
 
                     <div className={"flex flex-row grow justify-end"}>
                         {!loading && user.chargeWithExcessIsOn &&
-                            <StopIcon width={30} height={30} className={"text-red-400"}
+                            <StopIcon width={30} height={30} className={"cursor-pointer text-red-400"}
                                       onClick={() => enableExcessCharging(false)}/>
                         }
                         {!loading && !user.chargeWithExcessIsOn &&
-                            <PlayIcon width={30} height={30} className={"text-green-400"}
+                            <PlayIcon width={30} height={30} className={"cursor-pointer text-green-400"}
                                       onClick={() => enableExcessCharging(true)}/>
                         }
                     </div>
