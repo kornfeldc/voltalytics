@@ -87,13 +87,14 @@ export class SolarManApi {
     static solarManUrl = "/api/proxy";
     static keyVersion = 3;
 
-    static async getToken(user: IUser): Promise<string | undefined> {
+    static async getToken(user: IUser, force = false): Promise<string | undefined> {
         return await VoltCache.get(
             `solarMan_token_${this.keyVersion}`,
             user.email,
             60 * 5 /* 5min */,
             async (): Promise<any> => {
 
+                console.log("retrieve new token");
                 const url = `${this.solarManUrl}/account/v1.0/token?appId=${user.solarManAppId}`;
                 const body = {
                     appSecret: user.solarManAppSecret,
@@ -115,10 +116,10 @@ export class SolarManApi {
 
                 const result = await response.json();
                 return result.access_token;
-            });
+            }, force);
     }
 
-    static async getStationId(user: IUser, token: string | undefined = undefined): Promise<number | undefined> {
+    static async getStationId(user: IUser, token: string | undefined = undefined, force = false): Promise<number | undefined> {
         return await VoltCache.get(
             `solarMan_stationId_${this.keyVersion}`,
             user.email,
@@ -127,6 +128,7 @@ export class SolarManApi {
                 token = token ?? await this.getToken(user);
                 if (!token) return;
 
+                console.log("try to get station");
                 const body = {
                     appSecret: user.solarManAppSecret,
                     email: user.solarManAppEmail,
@@ -134,6 +136,7 @@ export class SolarManApi {
                 };
 
                 const bodyData = JSON.stringify(body);
+                console.log("body for station request", body);
 
                 const url = `${this.solarManUrl}/station/v1.0/list`;
                 const response = await fetch(url, {
@@ -144,29 +147,36 @@ export class SolarManApi {
                     },
                     body: bodyData
                 });
+                console.log("station response", response);
 
                 if (!response.ok) return;
 
                 const result = await response.json();
+                console.log("station result", result);
                 const stationList = result?.stationList ?? [];
                 if (stationList.length === 0) return;
                 return stationList[0].id;
-            }
+            },
+            force
         );
 
     }
 
-    static async getRealtimeInfo(user: IUser, force = false): Promise<ISolarManRealTimeInfo | undefined> {
+    static async getRealtimeInfo(user: IUser, force = false, forceNewToken = false): Promise<ISolarManRealTimeInfo | undefined> {
         return await VoltCache.get(
             `solarMan_realTimeData_${this.keyVersion}`,
             user.email,
             60,
             async (): Promise<any> => {
-                const token = user.solarManLastAccessToken ?? await this.getToken(user);
+                const token = forceNewToken || !user.solarManLastAccessToken ? await this.getToken(user, force) : user.solarManLastAccessToken;
                 if (!token) return;
-
-                const stationId = await this.getStationId(user, token);
-                if (!stationId) return;
+                
+                const stationId = await this.getStationId(user, token, force);
+                console.log("got station "+stationId);
+                if (!stationId && user.solarManLastAccessToken) 
+                    return this.getRealtimeInfo(user, true, true);
+                if (!stationId)
+                    return;
 
                 let url = `${this.solarManUrl}/station/v1.0/realTime?language=en`;
                 if (force)

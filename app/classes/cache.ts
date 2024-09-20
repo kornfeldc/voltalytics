@@ -32,6 +32,8 @@ export class VoltCache {
                             localStorage.removeItem(cacheKey);
                         }
                     }
+                    else
+                        localStorage.removeItem(cacheKey);
                 } catch (e) {
                     // if an error occurs - try to remove the cache
                     try {
@@ -43,18 +45,20 @@ export class VoltCache {
             }
 
             const data = await promise();
-            try {
-                localStorage.setItem(
-                    cacheKey,
-                    JSON.stringify({
-                        obj: data,
-                        expiresAt: moment().add(seconds, "seconds"),
-                    })
-                );
-            } catch (e) {
-                if (JSON.stringify(e).indexOf("exceeded") >= 0) {
-                    // cache is full -> remove all
-                    localStorage.clear();
+            if(data) {
+                try {
+                    localStorage.setItem(
+                        cacheKey,
+                        JSON.stringify({
+                            obj: data,
+                            expiresAt: moment().add(seconds, "seconds"),
+                        })
+                    );
+                } catch (e) {
+                    if (JSON.stringify(e).indexOf("exceeded") >= 0) {
+                        // cache is full -> remove all
+                        localStorage.clear();
+                    }
                 }
             }
             return data;
